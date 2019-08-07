@@ -15,7 +15,6 @@ export const searchResults = results => ({
 
 // thunk that handles search request
 export const submitSearch = () => (dispatch, getState) => {
-
   dispatch(searchResults([{company: "Pikachu", price: 42, hashtag: 'pikaPIKAAAA'}]))
 
 };
