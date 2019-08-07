@@ -3,6 +3,8 @@ const path = require('path');
 const Data = require('./../db/mongo/mock-data.js');
 const User = require('./../db/mongo/user-model.js');
 const billy = require('./../db/sql/postgres-billy.js');
+const authKeys = require('./../oauth-config/auth-keys');
+const fetch = require('isomorphic-fetch')
 
 const apiController = {};
 
@@ -103,14 +105,40 @@ apiController.removeItinerary = (req, res, next) => {
 apiController.yelpQuery = (req, res, next) => {
   const search = 'food';
   const location = 90292;
-  fetch(`https://api.yelp.com/v3/businesses/${search}&${location}`)
+  fetch(`https://api.yelp.com/v3/businesses/search?location=${location}&term=${search}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: "Bearer " + authKeys.yelp.apiKey,
+    }
+  })
   .then(response => response.json())
   .then(myJson => {
-    console.log(myJson)
-    res.locals.data = myJson;
+    const businesses = [];
+    for(let i = 0; i < myJson.businesses.length; i++) {
+      let obj = {};
+      obj.id = myJson.businesses[i].id;
+      obj.name = myJson.businesses[i].name;
+      obj.image = myJson.businesses[i].image_url;
+      obj.location = myJson.businesses[i].location;
+      obj.phone = myJson.businesses[i].display_phone;
+      obj.url = myJson.businesses[i].url;
+      obj.numReviews = myJson.businesses[i].review_count;
+      obj.rating = myJson.businesses[i].rating;
+      obj.price = myJson.businesses[i].price ? myJson.businesses[i].price: 'unknown';
+      obj.categories = (function makeArr() {
+        const catArr = [];
+        myJson.businesses[i].categories.forEach(obj => catArr.push(obj.title))
+        return catArr;
+      })();
+      obj.latlong = [myJson.businesses[i].coordinates.latitude, myJson.businesses[i].coordinates.longitude];
+      businesses.push(obj);
+    }
+    console.log(businesses);
+    res.locals.data = businesses;
     next();
   })
-  .catch(error => console.error('Error: ', error));
+  .catch(error => console.error('Error:', error));
 
 };
 
