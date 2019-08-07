@@ -3,6 +3,8 @@ const path = require('path');
 const Data = require('./../db/mongo/mock-data.js');
 const User = require('./../db/mongo/user-model.js');
 const billy = require('./../db/sql/postgres-billy.js');
+const authKeys = require('./../oauth-config/auth-keys');
+const fetch = require('isomorphic-fetch')
 
 const apiController = {};
 
@@ -29,26 +31,26 @@ apiController.search = (req, res, next) => {
 
   //   console.log('result in search controller is:', result);
 
-  //   result.rows.forEach(el => {
-  //     // console.log('HOOOYEE', el);
-  //     queryArray.push({
-  //       id,
-  //       address,
-  //       zip,
-  //       country,
-  //       phoneNumber,
-  //       lat,
-  //       lon,
-  //       price,
-  //       hashtag,
-  //       company,
-  //       date_open,
-  //       date_close,
-  //       image,
-  //       website,
-  //       rating,
-  //       geom,
-  //     } = el);
+    // result.rows.forEach(el => {
+    //   // console.log('HOOOYEE', el);
+    //   queryArray.push({
+    //     id,
+    //     address,
+    //     zip,
+    //     country,
+    //     phoneNumber,
+    //     lat,
+    //     lon,
+    //     price,
+    //     hashtag,
+    //     company,
+    //     date_open,
+    //     date_close,
+    //     image,
+    //     website,
+    //     rating,
+    //     geom,
+    //   } = el);
   //   });
 
   //   queryArray.forEach(el => {
@@ -67,6 +69,112 @@ apiController.search = (req, res, next) => {
   // })
   // res.locals.result = queryArray;
   return next();
+}
+
+apiController.searchEventbrite = (req, res, next) => {
+  const location = "Venice Beach";
+  fetch(`https://www.eventbriteapi.com/v3/events/search/?location.address=${location}&location.within=10km`, {
+    method: 'GET',
+    headers:{
+      "Authorization": "Bearer "+ authKeys.eventbrite.publicToken,
+    }
+  })
+  .then(data => data.json())
+  .then(result => {
+    let queryArray = result.events.map(el => {
+      console.log('New ELEMENT', el);
+      let newEl = {
+        name: el.name.text,
+        //handles events with no image URLs
+        imgUrl: () =>{
+          if(el.logo){
+            el.logo.original.url
+          }else{
+            null
+          }
+        },
+        id: el.id,
+        startTime: el.start.local,
+        endTime: el.end.local,
+        timezone: el.start.timezone, 
+        descriptionText: el.description.text,
+        descriptionHtml: el.description.html,
+        isFree: el.is_free,
+        website: el.url,
+        category: el.category_id,
+        venueId: el.venue_id,
+      };
+      return newEl;
+    })
+    let idsArr = queryArray.map(el => el.id);
+    res.locals.ids = idsArr;
+    res.locals.venueIds = queryArray.map(el => el.venueId);
+    res.locals.eResult = queryArray;
+    return next()
+  })
+  .catch(err => {
+    console.log('There was an error with the eventbrite API request', err)
+  })
+  
+}
+
+
+apiController.eventbritePrices = (req, res, next) => {
+  res.locals.prices = [];
+    res.locals.ids.forEach(id => {
+
+      //Fetch ticket prices from Eventbrite
+      fetch(`https://www.eventbriteapi.com/v3/events/${id}/ticket_classes/`, {
+        type: 'GET',
+        headers: {
+          "Authorization": "Bearer "+ authKeys.eventbrite.privateToken,
+        }
+      })
+      .then(data => data.json())
+
+      //pull out ticket prices and push into prices array on res.locals
+      .then(ticket => {
+        // console.log('ticket', ticket)
+        if(ticket.ticket_classes[0].cost){
+        res.locals.prices.push( { id: ticket.ticket_classes[0].cost.display})
+        } else {
+          // console.log('ticket ', ticket)
+          res.locals.prices.push({id: 'free'})
+        }
+        return next();
+      }).catch(err => {console.log('There was an error fetching prices', err)})
+    })
+}
+
+apiController.eventbriteLocations = (req, res, next) => {
+  res.locals.locations = [];
+    res.locals.venueIds.forEach(venueId => {
+
+      //Fetch ticket prices from Eventbrite
+      fetch(`https://www.eventbriteapi.com/v3/venues/${venueId}/`, {
+        type: 'GET',
+        headers: {
+          "Authorization": "Bearer "+ authKeys.eventbrite.privateToken,
+        }
+      })
+      .then(data => data.json())
+
+      //pull out addresses and push into prices array on res.locals
+      .then(venue => {
+        if(venue.address.localized_address_display && venue.latitude && venue.longitude){
+          res.locals.locations.push({ 
+            venueId: 
+              {
+                address: venue.address.localized_address_display,
+                latLong: [venue.latitude, venue.longitude]
+              }
+          })
+        } else {
+          res.locals.locations.push({venueId: 'No location found'})
+        }
+        return next();
+      }).catch(err => {console.log('There was an error fetching locations', err)})
+    })
 }
 
 apiController.addItinerary = (req, res, next) => {
