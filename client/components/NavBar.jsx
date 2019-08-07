@@ -24,7 +24,8 @@ class NavBar extends Component {
       <nav className="nav-bar">
         <h1 id='logo'>Dumbletour</h1>
         {/* <button className="sign-in"> */}
-        <div id="g-signin2" data-onsuccess={this.onSignIn} />
+        <div id="g-signin2" data-onsuccess = {this.onSignIn} />
+        LOL
         {/* </button> */}
         <NavOptions/>
      </nav>

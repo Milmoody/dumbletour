@@ -11,7 +11,7 @@ const mapStateToProps = store => ({
 
 
 
-const mapDispatchToProps = dispatch =>({
+const mapDispatchToProps = dispatch => ({
     startRegistration: e => dispatch(actions.startRegistration()),
     completeRegistration: e => dispatch(actions.completeRegistration())
 });
@@ -26,7 +26,7 @@ class NavOptions extends Component{
         return(
             <Fragment>
             {Object.keys(this.props.itinerary).length !== undefined &&  Object.keys(this.props.itinerary).length > 0? 
-            <div className="itinerary-items">Itinerary Items {Object.keys(this.props.itinerary).length}</div> : null}
+            <div className="itinerary-items">Itinerary Items {Object.keys(this.props.itinerary).length} Whoa</div> : null}
             
             {/* <Register startRegistration={this.props.startRegistration} completeRegistration={this.props.completeRegistration}/> */}
             {/* <Login/>
