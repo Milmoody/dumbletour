@@ -31,16 +31,16 @@ class NavBar extends Component {
     </Fragment>
     )}
 
-    componentDidMount() {
-      window.gapi.signin2.render('g-signin2', {
-        'scope': 'https://www.googleapis.com/auth/plus.login',
-        'width': 75,
-        'height': 25,
-        'longtitle': false,
-        'theme': 'light',
-        'onsuccess': this.onSignIn
-      });
-    }
+    // componentDidMount() {
+    //   window.gapi.signin2.render('g-signin2', {
+    //     'scope': 'https://www.googleapis.com/auth/plus.login',
+    //     'width': 75,
+    //     'height': 25,
+    //     'longtitle': false,
+    //     'theme': 'light',
+    //     'onsuccess': this.onSignIn
+    //   });
+    // }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps) (NavBar);
