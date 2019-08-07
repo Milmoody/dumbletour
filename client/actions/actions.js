@@ -35,23 +35,6 @@ export const addToItinerary = addedItem => ({
 
 // thunk that handles search request
 export const submitSearch = () => (dispatch, getState) => {
-  // const {
-  //   location, latitude, longitude, arrivalDate, departureDate,
-  // } = getState().dumbletour;
-  // console.log('location, latitude, longitude, arrivalDate, departureDate ', location, latitude, longitude, arrivalDate, departureDate);
-
-  // fetch('/api/search', {
-  //   method: 'POST',
-  //   headers: { 'Content-type': 'application/json' },
-  //   body: JSON.stringify({
-  //     location, latitude, longitude, arrivalDate, departureDate,
-  //   }),
-  // })
-  //   .then(res => res.json())
-  //   .then(json => dispatch(searchResults(json)))
-  //   .catch((err) => {
-  //     console.log('There was an error in the thunk: ', err)
-  //   });
   dispatch(searchResults([{company: "Pikachu", price: 42, hashtag: 'pikaPIKAAAA'}]))
 };
 
