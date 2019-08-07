@@ -3,24 +3,11 @@ import { connect } from 'react-redux';
 import MainBody from './MainBody.jsx';
 import NavBar from './NavBar.jsx';
 
-
-const mapStateToProps = (store) => {
-    return {
-
-    }
-};
-
-const mapDispatchToProps = dispatch =>({
-
-});
-
-
 const Wrapper = props =>(
-    <div>
-        {/* <h1>Hello World</h1> */}
+    <React.Fragment>
         <NavBar/> 
         <MainBody/>
-    </div>
+    </React.Fragment>
 )
 
-export default connect(mapStateToProps, mapDispatchToProps) (Wrapper);
+export default Wrapper
