@@ -14,4 +14,9 @@ router.put('/itinerary/remove', apiController.removeItinerary, (req, res) => {
   res.status(200).send(res.locals.itineraryRemove);
 });
 
+// yelp query
+router.post('/businesses', apiController.yelpQuery, (req, res) => {
+  res.status(200).send('res.locals.data');
+});
+
 module.exports = router;

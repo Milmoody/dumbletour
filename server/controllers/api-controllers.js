@@ -98,4 +98,19 @@ apiController.removeItinerary = (req, res, next) => {
   // return next();
 }
 
+//add yelp query
+apiController.yelpQuery = (req, res, next) => {
+  const search = 'food';
+  const location = 90292;
+  fetch(`https://api.yelp.com/v3/businesses/${search}&${location}`)
+  .then(response => response.json())
+  .then(myJson => {
+    console.log(myJson)
+    res.locals.data = myJson;
+    next();
+  })
+  .catch(error => console.error('Error: ', error));
+
+};
+
 module.exports = apiController;
