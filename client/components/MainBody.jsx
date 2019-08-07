@@ -49,4 +49,4 @@ class MainBody extends Component{
     }
  }
 
-export default connect(mapStateToProps, mapDispatchToProps) (MainBody);
+export default connect(mapStateToProps, mapDispatchToProps)(MainBody);
