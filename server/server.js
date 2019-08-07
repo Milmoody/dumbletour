@@ -17,10 +17,10 @@ const app = express();
 // use a json body parser
 app.use(bodyParser.json());
 
-// connect to mongoDB
-mongoose.connect(authKeys.mongodb.dbURI, { useNewUrlParser: true }, () => {
-  console.log('You are connected to dumbleCluster...');
-});
+// // connect to mongoDB
+// mongoose.connect(authKeys.mongodb.dbURI, { useNewUrlParser: true }, () => {
+//   console.log('You are connected to dumbleCluster...');
+// });
 
 // only serve webpack bundle file when running in production
 if (process.env.NODE_ENV === 'production') {
@@ -29,22 +29,22 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // initialize passport with cookie sessions
-app.use(cookieSession({
-  maxAge: 24 * 60 * 60 * 1000,
-  keys: [authKeys.session.cookieKey],
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-// authorization
-app.use('/auth', authRoutes);
-app.use('/profile', profileRoutes);
+// app.use(cookieSession({
+//   maxAge: 24 * 60 * 60 * 1000,
+//   keys: [authKeys.session.cookieKey],
+// }));
+// app.use(passport.initialize());
+// app.use(passport.session());
+// // authorization
+// app.use('/auth', authRoutes);
+// app.use('/profile', profileRoutes);
 app.use('/api', apiRoutes);
-// TEMPORARY OAUTH TEST
-// view engine
-app.set('view engine', 'ejs');
-app.get('/', (req, res) => {
-  res.render('./../client/auth-test.ejs');
-});
+// // TEMPORARY OAUTH TEST
+// // view engine
+// app.set('view engine', 'ejs');
+// app.get('/', (req, res) => {
+//   res.render('./../client/auth-test.ejs');
+// });
 
 
 // TEMPORARY ROUTES START

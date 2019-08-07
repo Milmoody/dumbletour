@@ -22,50 +22,51 @@ const apiController = {};
 apiController.search = (req, res, next) => {
   console.log('searchcontroller req body is:', req.body);
   const queryArray = [];
-  billy.query(`SELECT * FROM fake_data WHERE ST_DWithin(geom, ST_MakePoint(${req.body.latitude}, ${req.body.longitude})::geography, 5000000) AND date_open <= '${req.body.arrivalDate}' AND date_close >= '${req.body.departureDate}';`, (err, result) => {
-    if (err) console.log('we have an errr in search asda', err);
-    // res.send('suck');
+  // billy.query(`SELECT * FROM fake_data WHERE ST_DWithin(geom, ST_MakePoint(${req.body.latitude}, ${req.body.longitude})::geography, 5000000) AND date_open <= '${req.body.arrivalDate}' AND date_close >= '${req.body.departureDate}';`, (err, result) => {
+  //   console.log('the query happened')
+  //   if (err) console.log('we have an errr in search asda', err);
+  //   // res.send('suck');
 
-    // console.log('result in search controller is:', result);
+  //   console.log('result in search controller is:', result);
 
-    result.rows.forEach(el => {
-      // console.log('HOOOYEE', el);
-      queryArray.push({
-        id,
-        address,
-        zip,
-        country,
-        phoneNumber,
-        lat,
-        lon,
-        price,
-        hashtag,
-        company,
-        date_open,
-        date_close,
-        image,
-        website,
-        rating,
-        geom,
-      } = el);
-    });
+  //   result.rows.forEach(el => {
+  //     // console.log('HOOOYEE', el);
+  //     queryArray.push({
+  //       id,
+  //       address,
+  //       zip,
+  //       country,
+  //       phoneNumber,
+  //       lat,
+  //       lon,
+  //       price,
+  //       hashtag,
+  //       company,
+  //       date_open,
+  //       date_close,
+  //       image,
+  //       website,
+  //       rating,
+  //       geom,
+  //     } = el);
+  //   });
 
-    queryArray.forEach(el => {
-      new Data(el).save().then(result => result).catch(err => console.log('errrrrr', err));
-    })
+  //   queryArray.forEach(el => {
+  //     new Data(el).save().then(result => result).catch(err => console.log('errrrrr', err));
+  //   })
 
-    console.log('qeuruearray', queryArray);
+  //   console.log('qeuruearray', queryArray);
 
-    // // res.locals.result = queryArray;
-    return res.send(queryArray);
-    // User.insertMany(JSON.parse(result.rows), (error, documents) => {
-    //   console.log('Data successfully transferred to mongo DB', documents);
-    //   res.locals.mongoDocs = documents;
-    // })
+  //   // // res.locals.result = queryArray;
+  //   return res.send(queryArray);
+  //   // User.insertMany(JSON.parse(result.rows), (error, documents) => {
+  //   //   console.log('Data successfully transferred to mongo DB', documents);
+  //   //   res.locals.mongoDocs = documents;
+  //   // })
 
-  })
+  // })
   // res.locals.result = queryArray;
-  // return next();
+  return next();
 }
 
 apiController.addItinerary = (req, res, next) => {
