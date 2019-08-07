@@ -4,16 +4,12 @@ import * as actions from '../actions/actions.js';
 
 const mapStateToProps = (store) => ({
     searchBoxIsOpen: store.dumbletour.searchBoxIsOpen,
-    location: store.dumbletour.location,
-    arrivalDate: store.dumbletour.arrivalDate,
-    departureDate: store.dumbletour.departureDate,
-    longitude: store.dumbletour.longitude,
-    latitude: store.dumbletour.latitude
+    zipcode: store.dumbletour.zipcode,
 });
 
 const mapDispatchToProps = dispatch =>({
     handleKey:(e) => {
-        dispatch(actions.updateLocation(e.target.value))
+        dispatch(actions.updatezipcode(e.target.value))
     },
     submitSearch: (e) => {
         e.preventDefault();
@@ -30,11 +26,11 @@ class SearchModal extends Component {
         return (
         <span className="search-modal">
           <form className="search-form">
-            <label>
+            <label htmlFor = 'zipcode'>
               Zip Code
-            <input type='text' value={this.props.location} onChange={(e) => this.props.handleKey(e)} placeholder='Zip Code'></input>
-            </label>
-            <button onClick={(e)=> this.props.submitSearch(e)}>Accio Adventure!</button>
+              </label>
+            <input type='text' name = 'zipcode' value={this.props.zipcode} onChange={(e) => this.props.handleKey(e)} placeholder='Zip Code'></input>
+            <button onClick={(e)=> this.props.submitSearch(e)}>Follow the Yellow Brick Road</button>
           </form>
         </span>
         )
