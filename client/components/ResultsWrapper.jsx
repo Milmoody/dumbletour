@@ -47,7 +47,7 @@ const ResultsWrapper = (props) => {
     </section>
     : active === 'BUSINESSES' 
     ? <section className = 'business-result-cards'>
-      <h1>Businesses</h1>
+      <BusinessResultCard></BusinessResultCard>
     </section>
     : <Map {...maps}></Map>
     }
