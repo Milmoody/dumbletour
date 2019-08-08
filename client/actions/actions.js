@@ -39,3 +39,4 @@ export const submitSearch = (zipcode) => (dispatch, getState) => {
   // promise.all - and send the results back to the client. 
 };
 
+// thunk that adds itinerary item
