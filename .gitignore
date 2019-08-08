@@ -5,4 +5,4 @@ npm-debug.log
 .env
 package-lock.json
 .vscode
-authkeys.js
+server/oauth-config/auth-keys.js
