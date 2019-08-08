@@ -12,8 +12,6 @@ class Map extends Component {
   }
 
   componentDidMount() {
-    console.log(this.mapRef);
-
     this.map = new mapboxgl.Map({
       container: this.mapRef.current,
       style: 'mapbox://styles/devonev92/cjz213rde75ed1crvyagglsv9',
