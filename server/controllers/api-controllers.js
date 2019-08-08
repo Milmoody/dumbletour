@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const fetch = require('isomorphic-fetch')
 const Data = require('./../db/mongo/mock-data.js');
 const User = require('./../db/mongo/user-model.js');
 const billy = require('./../db/sql/postgres-billy.js');
@@ -78,24 +79,18 @@ apiController.searchEventbrite = (req, res, next) => {
       };
       return newEl;
     })
-    res.locals.ids = queryArray.map(el => el.id);
-    res.locals.venueIds = queryArray.map(el => el.venueId);
-    res.locals.eResult = queryArray;
-    return next()
-  })
-  .catch(err => {
-    console.log('There was an error with the eventbrite API request', err)
-  })
-  
-}
+    .catch((err) => {
+      console.log('There was an error with the eventbrite API request', err);
+    });
+};
 
 
 apiController.eventbritePrices = (req, res, next) => {
-  let prices = {};
+  const prices = {};
 
-    let promises = res.locals.ids.map(id => {
+  const promises = res.locals.ids.map((id) => 
       //Fetch ticket prices from Eventbrite
-      return fetch(`https://www.eventbriteapi.com/v3/events/${id}/ticket_classes/`, {
+       fetch(`https://www.eventbriteapi.com/v3/events/${id}/ticket_classes/`, {
         type: 'GET',
         headers: {
           "Authorization": "Bearer "+ authKeys.eventbrite.privateToken,
@@ -119,16 +114,16 @@ apiController.eventbritePrices = (req, res, next) => {
     .then(result => {
       res.locals.prices = prices;
       // console.log('res.locals.prices',res.locals.prices)
-      return next()
-    } )
-}
+      return next();
+    });
+};
 
 apiController.eventbriteLocations = (req, res, next) => {
   let locations = {};
   //create array of promises to fetch data for each id
     let promises = res.locals.venueIds.map(venueId => {
       //Fetch ticket prices from Eventbrite
-      return fetch(`https://www.eventbriteapi.com/v3/venues/${venueId}/`, {
+       fetch(`https://www.eventbriteapi.com/v3/venues/${venueId}/`, {
         type: 'GET',
         headers: {
           "Authorization": "Bearer "+ authKeys.eventbrite.privateToken,
@@ -161,17 +156,17 @@ apiController.eventbriteLocations = (req, res, next) => {
     Promise.all(promises)
     .then(result => {
       res.locals.locations = locations;
-      return next()
-    } )
-}
+      return next();
+    });
+};
 
 apiController.eventParse = (req, res, next) => {
   events = res.locals.eResult;
-  prices = res.locals.prices; 
+  prices = res.locals.prices;
   // console.log('prices:  ', res.locals.prices)
   locations = res.locals.locations;
   // console.log('locations: ', res.locals.locations)
-  for(let i = 0; i < events.length; i++){
+  for (let i = 0; i < events.length; i++) {
     venueIdNum = events[i].venueId;
     venueId = venueIdNum.toString();
     // console.log(venueId)
@@ -187,7 +182,7 @@ apiController.eventParse = (req, res, next) => {
   }
   res.locals.eResultClean = events;
   return next();
-}
+};
 
 apiController.addItinerary = (req, res, next) => {
   User.findOneAndUpdate({ username: req.body.username }, { $push: { itinerary: req.body.event } }, { new: true, useFindAndMondify: false }, (error, itinerary) => {
@@ -196,13 +191,13 @@ apiController.addItinerary = (req, res, next) => {
       const myError = new Error();
       myError.msg = error;
       return res.status(400).send(myError);
-    } else {
+    } 
       // console.log('itinerary successfully updated(item added)!')
       return res.send(itinerary);
-    }
-  })
+    
+  });
   // return next();
-}
+};
 
 apiController.removeItinerary = (req, res, next) => {
   User.findOneAndUpdate({ username: req.body.username }, { $pull: { itinerary: req.body.event } }, { new: true }, (error, itinerary) => {
@@ -211,101 +206,100 @@ apiController.removeItinerary = (req, res, next) => {
       const myError = new Error();
       myError.msg = error;
       return res.status(400).send(myError);
-    } else {
+    } 
       console.log('itinerary successfully updated(item removed)!')
       res.send(itinerary);
-    }
-  })
+    
+  });
   // return next();
-}
+};
 
-//yelp query for gender neutral bathrooms
+// yelp query for gender neutral bathrooms
 apiController.gnBathQuery = (req, res, next) => {
   const search = 'gender_neutral_restrooms';
   const location = req.body.zipcode || '90292';
-  
+
   fetch(`https://api.yelp.com/v3/businesses/search?limit=50&location=${location}&attributes=${search}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: "Bearer " + authKeys.yelp.apiKey,
-    }
+      Authorization: 'Bearer ' + authKeys.yelp.apiKey,
+    },
   })
-  .then(response => response.json())
-  .then(myJson => {
-    const genNeutralBusinesses = [];
-    const genNeutralIds = [];
-    for(let i = 0; i < myJson.businesses.length; i++) {
-      let obj = {};
-      obj.id = myJson.businesses[i].id;
-      obj.name = myJson.businesses[i].name;
-      obj.image = myJson.businesses[i].image_url;
-      obj.location = myJson.businesses[i].location;
-      obj.phone = myJson.businesses[i].display_phone;
-      obj.url = myJson.businesses[i].url;
-      obj.numReviews = myJson.businesses[i].review_count;
-      obj.rating = myJson.businesses[i].rating;
-      obj.price = myJson.businesses[i].price ? myJson.businesses[i].price: 'unknown';
-      obj.categories = (function makeArr() {
-        const catArr = [];
-        myJson.businesses[i].categories.forEach(obj => catArr.push(obj.title))
-        return catArr;
-      })();
-      obj.latlong = [myJson.businesses[i].coordinates.latitude, myJson.businesses[i].coordinates.longitude];
-      genderNeutralBathrooms = true;
-      genNeutralBusinesses.push(obj);
-      genNeutralIds.push(myJson.businesses[i].id);
-    }
-    res.locals.genNeutralBusinesses = genNeutralBusinesses;
-    res.locals.genNeutralIds = genNeutralIds;
-    next();
-  })
-  .catch(error => console.error('Error:', error));
-
+    .then(response => response.json())
+    .then((myJson) => {
+      const genNeutralBusinesses = [];
+      const genNeutralIds = [];
+      for (let i = 0; i < myJson.businesses.length; i++) {
+        const obj = {};
+        obj.id = myJson.businesses[i].id;
+        obj.name = myJson.businesses[i].name;
+        obj.image = myJson.businesses[i].image_url;
+        obj.location = myJson.businesses[i].location;
+        obj.phone = myJson.businesses[i].display_phone;
+        obj.url = myJson.businesses[i].url;
+        obj.numReviews = myJson.businesses[i].review_count;
+        obj.rating = myJson.businesses[i].rating;
+        obj.price = myJson.businesses[i].price ? myJson.businesses[i].price : 'unknown';
+        obj.categories = (function makeArr() {
+          const catArr = [];
+          myJson.businesses[i].categories.forEach(obj => catArr.push(obj.title));
+          return catArr;
+        }());
+        obj.latlong = [myJson.businesses[i].coordinates.latitude, myJson.businesses[i].coordinates.longitude];
+        obj.genderNeutralBathrooms = true;
+        genNeutralBusinesses.push(obj);
+        genNeutralIds.push(myJson.businesses[i].id);
+      }
+      res.locals.genNeutralBusinesses = genNeutralBusinesses;
+      res.locals.genNeutralIds = genNeutralIds;
+      next();
+    })
+    .catch(error => console.error('Error:', error));
 };
 
 // yelp query for businesses classified as Open-To-All
 apiController.openQuery = (req, res, next) => {
   const search = 'open_to_all';
   const location = req.body.zipcode || '90292';
-  
+
   fetch(`https://api.yelp.com/v3/businesses/search?limit=50&location=${location}&attributes=${search}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + authKeys.yelp.apiKey,
-    }
+      Authorization: `Bearer ${  authKeys.yelp.apiKey}`,
+    },
   })
-  .then(response => response.json())
-  .then(myJson => {
-    const openBus = [];
-    const open = [];
-    for(let i = 0; i < myJson.businesses.length; i++) {
-      let obj = {};
-      obj.id = myJson.businesses[i].id;
-      obj.name = myJson.businesses[i].name;
-      obj.image = myJson.businesses[i].image_url;
-      obj.location = myJson.businesses[i].location;
-      obj.phone = myJson.businesses[i].display_phone;
-      obj.url = myJson.businesses[i].url;
-      obj.numReviews = myJson.businesses[i].review_count;
-      obj.rating = myJson.businesses[i].rating;
-      obj.price = myJson.businesses[i].price ? myJson.businesses[i].price: 'unknown';
-      obj.categories = (function makeArr() {
-        const catArr = [];
-        myJson.businesses[i].categories.forEach(obj => catArr.push(obj.title))
-        return catArr;
-      })();
-      obj.latlong = [myJson.businesses[i].coordinates.latitude, myJson.businesses[i].coordinates.longitude];
-      openToAll = true;
-      openBus.push(obj);
-      open.push(myJson.businesses[i].id);
-    }
-    res.locals.open = openBus;
-    res.locals.openKey = open;
-    next();
-  })
-  .catch(error => console.error('Error:', error));
+    .then(response => response.json())
+    .then((myJson) => {
+      const openBus = [];
+      const open = [];
+      for (let i = 0; i < myJson.businesses.length; i++) {
+        const obj = {};
+        obj.id = myJson.businesses[i].id;
+        obj.name = myJson.businesses[i].name;
+        obj.image = myJson.businesses[i].image_url;
+        obj.location = myJson.businesses[i].location;
+        obj.phone = myJson.businesses[i].display_phone;
+        obj.url = myJson.businesses[i].url;
+        obj.numReviews = myJson.businesses[i].review_count;
+        obj.rating = myJson.businesses[i].rating;
+        obj.price = myJson.businesses[i].price ? myJson.businesses[i].price : 'unknown';
+        obj.categories = (function makeArr() {
+          const catArr = [];
+          myJson.businesses[i].categories.forEach(obj => catArr.push(obj.title));
+          return catArr;
+        }());
+        obj.latlong = [myJson.businesses[i].coordinates.latitude, myJson.businesses[i].coordinates.longitude];
+        obj.openToAll = true;
+        openBus.push(obj);
+        open.push(myJson.businesses[i].id);
+      }
+      res.locals.open = openBus;
+      res.locals.openKey = open;
+      next();
+    })
+    .catch(error => console.error('Error:', error));
 };
 
 apiController.mergeQueries = (req, res, next) => {
@@ -318,12 +312,12 @@ apiController.mergeQueries = (req, res, next) => {
   console.log('open businesses:', count);
   // inserts the businesses that do not show up in the first query, into the second query
   const mergedArr = [].concat(res.locals.genNeutralBusinesses);
-  const addOpen = [];
+  const inBoth = [];
   for (let i = 0; i < res.locals.open.length; i++) {
     if (res.locals.genNeutralIds.indexOf(res.locals.open[i].id) === -1) {
       mergedArr.push(res.locals.open[i]);
     } else {
-      addOpen.push(res.locals.open[i].id);
+      inBoth.push(res.locals.open[i].id);
     }
   }
   // check to see the new count
@@ -331,7 +325,6 @@ apiController.mergeQueries = (req, res, next) => {
   mergedArr.forEach(item => count += 1);
   console.log('merged arr:', count);
   // add property to indicate if business needs open property set to true
-
   res.locals.data = mergedArr;
   next();
 };
