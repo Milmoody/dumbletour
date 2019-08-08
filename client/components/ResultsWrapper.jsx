@@ -2,14 +2,21 @@ import React, {Fragment, useState} from 'react';
 import BusinessResultCard from './BusinessResultCard.jsx';
 import ResultCard from './ResultCard.jsx';
 import Map from './Map.jsx';
+import mockdata from '../mockdata/mockdata.js';
+
 const ResultsWrapper = (props) => {
   const [active, setActive] = useState('EVENTS')
+  function formatDescription (desc) {
+    if (desc.length > 250) return desc.subStr(0, 250) + '...';
+    return desc;
+  }
   const events = [];
   const maps = [];
   const businesses = [];
   props.eventSearchResults.forEach((r, idx) => {
+    const description = formatDescription(r.descriptionText);
     maps.push({...r});
-    events.push(<ResultCard key = {'event-result' + idx} {...r} />);
+    events.push(<ResultCard key = {'event-result' + idx} {...description} {...r} />);
   });
   return (
   <section className = 'results-wrapper'>

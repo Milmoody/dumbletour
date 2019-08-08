@@ -146,10 +146,8 @@ body {
   grid-row-gap: 25px;
   background-color: $result-card-background;
 }
-.result-card {
 
-}
-.result-card.event-card{
+.result-card.event-card .result-card.business-card{
   width: 100%;
   border: solid 1px $dumble-result-card-bor-col;
   background-color: $light-accent-col;

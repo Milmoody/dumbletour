@@ -18,9 +18,9 @@ router.post('/search', apiController.searchEventbrite, apiController.eventbriteP
 
 
 // yelp query
-// router.post('/businesses', apiController.gnBathQuery, apiController.openQuery, apiController.mergeQueries, (req, res) => {
-//   res.status(200).send(res.locals.data);
-// });
+router.post('/businesses', apiController.gnBathQuery, apiController.openQuery, apiController.mergeQueries, (req, res) => {
+  res.status(200).send(res.locals.data);
+});
 
 router.get('/events', (req, res) => {
   res.json({'events': true})
