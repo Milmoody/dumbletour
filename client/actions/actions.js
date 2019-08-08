@@ -12,31 +12,27 @@ export const searchResults = results => ({
   payload: results,
 });
 
+export const setView = view => ({
+  type: types.SET_VIEW,
+  payload: view
+})
+
+export const updateZipCode = zipcode => ({
+  type: types.UPDATE_ZIP_CODE,
+  payload: zipcode,
+})
 
 // thunk that handles search request
-export const submitSearch = () => (dispatch, getState) => {
-<<<<<<< HEAD
-//   const {
-//     location, latitude, longitude, arrivalDate, departureDate,
-//   } = getState().dumbletour;
-  // console.log('location, latitude, longitude, arrivalDate, departureDate ', location, latitude, longitude, arrivalDate, departureDate);
-const { location } = getState().dumbletour;
-  fetch('/api/search', {
-    method: 'POST',
-    headers: { 'Content-type': 'application/json' },
-    body: JSON.stringify({
-      location
-    }),
-  })
-    .then(res => res.json())
-    .then(json => console.log(json))
-    .catch((err) => {
-      console.log('There was an error in the thunk: ', err)
-    });
-  // dispatch(searchResults([{company: "Pikachu", price: 42, hashtag: 'pikaPIKAAAA'}]))
-=======
-  dispatch(searchResults([{company: "Pikachu", price: 42, hashtag: 'pikaPIKAAAA'}]))
 
->>>>>>> master
+export const submitSearch = (zipcode) => (dispatch, getState) => {
+  // make a fetch request to yelp / Eventbrite
+  fetch('/api');
+ 
+  // promisify both requests 
+
+  // promise.all - and send the results back to the client. 
+
+
+  dispatch(searchResults(zipcode));
 };
 
