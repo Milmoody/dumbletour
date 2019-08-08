@@ -21,7 +21,7 @@ const apiController = {};
 // }
 
 apiController.searchEventbrite = (req, res, next) => {
-  const location = "Venice Beach";
+  const location = req.body.location || "Venice Beach";
   fetch(
     `https://www.eventbriteapi.com/v3/events/search/?location.address=${location}&location.within=1km`,
     {
@@ -112,7 +112,7 @@ apiController.eventbritePrices = (req, res, next) => {
 
 apiController.eventbriteLocations = (req, res, next) => {
   // res.locals.locations = {};
-  locations = {};
+  let locations = {};
     let promises = res.locals.venueIds.map(venueId => {
       // console.log(venueId)
       //Fetch ticket prices from Eventbrite
@@ -131,6 +131,12 @@ apiController.eventbriteLocations = (req, res, next) => {
           locations[venueId] =
               {
                 address: venue.address.localized_address_display,
+                address1: venue.address.address_1,
+                address1: venue.address.address_2,
+                city: venue.address.city,
+                region: venue.address.region,
+                postalCode: venue.address.postal_code,
+                country: venue.address.country,
                 latLong: [venue.latitude, venue.longitude]
               }
         } else {
@@ -152,15 +158,21 @@ apiController.eventbriteLocations = (req, res, next) => {
 apiController.eventParse = (req, res, next) => {
   events = res.locals.eResult;
   prices = res.locals.prices; 
-  console.log('prices:  ', res.locals.prices)
+  // console.log('prices:  ', res.locals.prices)
   locations = res.locals.locations;
-  console.log('locations: ', res.locals.locations)
+  // console.log('locations: ', res.locals.locations)
   for(let i = 0; i < events.length; i++){
     venueIdNum = events[i].venueId;
     venueId = venueIdNum.toString();
-    console.log(venueId)
+    // console.log(venueId)
     events[i]["address"] = locations[venueId].address;
     events[i]["latLong"] = locations[venueId].latLong;
+    events[i]["address1"] = locations[venueId].address1;
+    events[i]["address2"] = locations[venueId].address2;
+    events[i]["city"] = locations[venueId].city;
+    events[i]["region"] = locations[venueId].region;
+    events[i]["postalCode"] = locations[venueId].postalCode;
+    events[i]["country"] = locations[venueId].country;
     events[i]["price"] = prices[events[i].id];
   }
   res.locals.eResultClean = events;

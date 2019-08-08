@@ -15,17 +15,17 @@ export const searchResults = results => ({
 
 // thunk that handles search request
 export const submitSearch = () => (dispatch, getState) => {
-<<<<<<< HEAD
+
 //   const {
 //     location, latitude, longitude, arrivalDate, departureDate,
 //   } = getState().dumbletour;
   // console.log('location, latitude, longitude, arrivalDate, departureDate ', location, latitude, longitude, arrivalDate, departureDate);
-const { location } = getState().dumbletour;
+const { zipcode } = getState().dumbletour;
   fetch('/api/search', {
     method: 'POST',
     headers: { 'Content-type': 'application/json' },
     body: JSON.stringify({
-      location
+      zipcode
     }),
   })
     .then(res => res.json())
@@ -34,9 +34,7 @@ const { location } = getState().dumbletour;
       console.log('There was an error in the thunk: ', err)
     });
   // dispatch(searchResults([{company: "Pikachu", price: 42, hashtag: 'pikaPIKAAAA'}]))
-=======
   dispatch(searchResults([{company: "Pikachu", price: 42, hashtag: 'pikaPIKAAAA'}]))
 
->>>>>>> master
 };
 
