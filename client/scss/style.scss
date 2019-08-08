@@ -18,7 +18,8 @@ $primary-text-col: rgb(228,232,240);
 $secondary-col: rgb(138, 127, 167);
 $accent-col: #ccb220;
 $light-accent-col: #eee2d91c;
-// $light-accent-col: rgb(225, 186, 108);
+
+$result-card-background: #eee;
 $dumble-nav-bar-col: $primary-col;
 $dumble-result-card-col: lighten($dumble-nav-bar-col,45%);
 $dumble-result-card-bor-col: #70809008;
@@ -44,6 +45,7 @@ $dumble-heart-color-selected: #9b0404;
 body {
   background-color: white;
   font-family: 'Josefin Sans', sans-serif;
+  font-size: 62.5%;
 }
 
 .nav-bar{  
@@ -99,16 +101,16 @@ body {
     border: none;
     cursor: pointer;
   }
+  button:hover {
+    color: $accent-col;
+    background-color: $primary-text-col;
+  }
 }
 
 .main-body-with-modal{
   width: 100%;
   display: flex;
   justify-content: center;
-}
-
-.main-body-without-modal{
-  width: 100%;
 }
 
 .search-form{
@@ -119,45 +121,68 @@ body {
   justify-content: space-around;
 }
 
-.result-cards{
+.results-wrapper {
   margin-top: 150px;
+
+  .results-nav {
+    display: flex;
+    .results-tab {
+      padding: 20px 20px 0 20px;
+      border-radius: 5px;
+      font-size: 2.5rem;
+      cursor: pointer;
+    }
+    .tab-active {
+      background-color: $result-card-background;
+    }
+  }
+}
+.result-cards{
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  grid-template-rows: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(3, minmax(200px, 1fr));
   justify-items: center;
   grid-column-gap: 25px;
   grid-row-gap: 25px;
+  background-color: $result-card-background;
 }
+.result-card {
 
-.result-card{
+}
+.result-card.event-card{
+  width: 100%;
   border: solid 1px $dumble-result-card-bor-col;
   background-color: $light-accent-col;
-  position: relative;
   padding:20px;
-  img{
-    margin-top: 5px;
-    margin-bottom: 5px;
+  font-size: 1.2rem;
+  a:hover {
+    color: $secondary-col;
+  }
+  .card-name {
+    padding: 3px 0;
+  }
+  .card-start-end {
+    padding: 3px 0;
+  }
+  .card-img {
+    margin: 0 auto;
+  }
+  .card-category {
+    text-transform: uppercase;
+    padding: 5px 0;
+  }
+  .card-price{
+    padding: 10px 0;
+    font-size: 1.5rem;
+    color: $dumble-price-col;
+  }
+  
+  .card-www{
+    color: $dubmle-ig-www-col;
   }
 }
 
-.card-price{
-  padding-top: 10px;
-  font-size: 1.5rem;
-  color: $dumble-price-col;
-}
 
-.itinerary-items{
-  color: $primary-text-col;
-  font-size: 2rem;
-  align-self: center;
-  padding-right: 35px;
-}
-
-.card-www{
-  color: $dubmle-ig-www-col;
-}
-.card-ig{
-  color: $dubmle-ig-www-col;
-}
 
 
 /* heart icon for liking  */

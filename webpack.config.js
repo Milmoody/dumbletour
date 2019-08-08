@@ -8,10 +8,10 @@ module.exports = {
     filename: 'bundle.js',
   },
   devServer: {
-    publicPath: '/build/',
+    publicPath: '/build',
     proxy: {
       '/api': 'http://localhost:3000',
-      '/auth': 'http://localhost:3000',
+      '/': 'http://localhost:3000',
       secure: false,
     },
   },
