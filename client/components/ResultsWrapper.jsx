@@ -6,17 +6,21 @@ import mockdata from '../mockdata/mockdata.js';
 
 const ResultsWrapper = (props) => {
   const [active, setActive] = useState('EVENTS')
-  function formatDescription (desc) {
-    if (desc.length > 250) return desc.subStr(0, 250) + '...';
-    return desc;
-  }
   const events = [];
   const maps = [];
   const businesses = [];
-  props.eventBriteResults.forEach((r, idx) => {
+
+  props.eventBriteResults ? props.eventBriteResults.forEach((r, idx) => {
+    const description = r.descriptionText.length > 250 ? r.descriptionText.slice(0, 250)+'...' : r.description;
     maps.push({...r});
-    events.push(<ResultCard key = {'event-result' + idx} {...description} {...r} />);
-  });
+    events.push(<ResultCard key = {'event-result' + idx} description= {description} {...r} />);
+  }) : events.push('no results found')
+
+  props.yelpResults ? props.yelpResults.forEach((results, idx) => {
+    maps.push({...results})
+    businesses.push(<BusinessResultCard key = {'bus-result'+idx} {...results}></BusinessResultCard>)
+  }) : businesses.push('no businesses found')
+
   return (
   <section className = 'results-wrapper'>
     <nav className = 'results-nav'>
@@ -39,7 +43,7 @@ const ResultsWrapper = (props) => {
     </section>
     : active === 'BUSINESSES' 
     ? <section className = 'business-result-cards'>
-      <BusinessResultCard></BusinessResultCard>
+      {businesses}
     </section>
     : <Map {...maps}></Map>
     }

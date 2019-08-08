@@ -198,46 +198,115 @@ apiController.removeItinerary = (req, res, next) => {
   // return next();
 }
 
-//add yelp query
-apiController.yelpQuery = (req, res, next) => {
-  console.log(req.body);
-  const search = 'food';
+// yelp query for gender neutral bathrooms
+apiController.gnBathQuery = (req, res, next) => {
+  const search = 'gender_neutral_restrooms';
   const location = req.body.zipcode || '90292';
-  fetch(`https://api.yelp.com/v3/businesses/search?location=${location}&term=${search}`, {
+  fetch(`https://api.yelp.com/v3/businesses/search?limit=50&location=${location}&attributes=${search}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: "Bearer " + authKeys.yelp.apiKey,
-    }
+      Authorization: 'Bearer ' + authKeys.yelp.apiKey,
+    },
   })
-  .then(response => response.json())
-  .then(myJson => {
-    const businesses = [];
-    for(let i = 0; i < myJson.businesses.length; i++) {
-      let obj = {};
-      obj.id = myJson.businesses[i].id;
-      obj.name = myJson.businesses[i].name;
-      obj.image = myJson.businesses[i].image_url;
-      obj.location = myJson.businesses[i].location;
-      obj.phone = myJson.businesses[i].display_phone;
-      obj.url = myJson.businesses[i].url;
-      obj.numReviews = myJson.businesses[i].review_count;
-      obj.rating = myJson.businesses[i].rating;
-      obj.price = myJson.businesses[i].price ? myJson.businesses[i].price: 'unknown';
-      obj.categories = (function makeArr() {
-        const catArr = [];
-        myJson.businesses[i].categories.forEach(obj => catArr.push(obj.title))
-        return catArr;
-      })();
-      obj.latlong = [myJson.businesses[i].coordinates.latitude, myJson.businesses[i].coordinates.longitude];
-      businesses.push(obj);
-    }
-    // console.log(businesses);
-    res.locals.data = businesses;
-    next();
+    .then(response => response.json())
+    .then((myJson) => {
+      const genNeutralBusinesses = [];
+      const genNeutralIds = [];
+      for (let i = 0; i < myJson.businesses.length; i++) {
+        const obj = {};
+        obj.id = myJson.businesses[i].id;
+        obj.name = myJson.businesses[i].name;
+        obj.image = myJson.businesses[i].image_url;
+        obj.location = myJson.businesses[i].location;
+        obj.phone = myJson.businesses[i].display_phone;
+        obj.url = myJson.businesses[i].url;
+        obj.numReviews = myJson.businesses[i].review_count;
+        obj.rating = myJson.businesses[i].rating;
+        obj.price = myJson.businesses[i].price ? myJson.businesses[i].price : 'unknown';
+        obj.categories = (function makeArr() {
+          const catArr = [];
+          myJson.businesses[i].categories.forEach(obj => catArr.push(obj.title));
+          return catArr;
+        }());
+        obj.latlong = [myJson.businesses[i].coordinates.latitude, myJson.businesses[i].coordinates.longitude];
+        obj.genderNeutralBathrooms = true;
+        genNeutralBusinesses.push(obj);
+        genNeutralIds.push(myJson.businesses[i].id);
+      }
+      res.locals.genNeutralBusinesses = genNeutralBusinesses;
+      res.locals.genNeutralIds = genNeutralIds;
+      next();
+    })
+    .catch(error => console.error('Error:', error));
+};
+// yelp query for businesses classified as Open-To-All
+apiController.openQuery = (req, res, next) => {
+  const search = 'open_to_all';
+  const location = req.body.zipcode || '90292';
+  fetch(`https://api.yelp.com/v3/businesses/search?limit=50&location=${location}&attributes=${search}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${  authKeys.yelp.apiKey}`,
+    },
   })
-  .catch(error => console.error('Error:', error));
-
+    .then(response => response.json())
+    .then((myJson) => {
+      const openBus = [];
+      const open = [];
+      for (let i = 0; i < myJson.businesses.length; i++) {
+        const obj = {};
+        obj.id = myJson.businesses[i].id;
+        obj.name = myJson.businesses[i].name;
+        obj.image = myJson.businesses[i].image_url;
+        obj.location = myJson.businesses[i].location;
+        obj.phone = myJson.businesses[i].display_phone;
+        obj.url = myJson.businesses[i].url;
+        obj.numReviews = myJson.businesses[i].review_count;
+        obj.rating = myJson.businesses[i].rating;
+        obj.price = myJson.businesses[i].price ? myJson.businesses[i].price : 'unknown';
+        obj.categories = (function makeArr() {
+          const catArr = [];
+          myJson.businesses[i].categories.forEach(obj => catArr.push(obj.title));
+          return catArr;
+        }());
+        obj.latlong = [myJson.businesses[i].coordinates.latitude, myJson.businesses[i].coordinates.longitude];
+        obj.openToAll = true;
+        openBus.push(obj);
+        open.push(myJson.businesses[i].id);
+      }
+      res.locals.open = openBus;
+      res.locals.openKey = open;
+      next();
+    })
+    .catch(error => console.error('Error:', error));
+};
+apiController.mergeQueries = (req, res, next) => {
+  // confirming number of items in each array
+  let count = 0;
+  res.locals.genNeutralBusinesses.forEach(item => count += 1);
+  console.log('gender neutral bathroom businesses:', count);
+  count = 0;
+  res.locals.open.forEach(item => count += 1);
+  console.log('open businesses:', count);
+  // inserts the businesses that do not show up in the first query, into the second query
+  const mergedArr = [].concat(res.locals.genNeutralBusinesses);
+  const inBoth = [];
+  for (let i = 0; i < res.locals.open.length; i++) {
+    if (res.locals.genNeutralIds.indexOf(res.locals.open[i].id) === -1) {
+      mergedArr.push(res.locals.open[i]);
+    } else {
+      inBoth.push(res.locals.open[i].id);
+    }
+  }
+  // check to see the new count
+  count = 0;
+  mergedArr.forEach(item => count += 1);
+  console.log('merged arr:', count);
+  // add property to indicate if business needs open property set to true
+  res.locals.data = mergedArr;
+  next();
 };
 
 module.exports = apiController;

@@ -23,9 +23,14 @@ class MainBody extends Component{
         <div className="main-body-with-modal">
         {this.props.searchBoxIsOpen 
         ? <SearchModal /> 
-        : <ResultsWrapper 
+        : this.props.yelpResults || this.props.eventBriteResults
+        ? <ResultsWrapper 
           searchBoxIsOpen = {this.props.searchBoxIsOpen}
-          eventBriteResults = {this.props.eventBriteResults}></ResultsWrapper>}
+          eventBriteResults = {this.props.eventBriteResults}
+          yelpResults = {this.props.yelpResults}></ResultsWrapper>
+        : <React.Fragment>
+        <iframe src="https://giphy.com/embed/xTk9ZvMnbIiIew7IpW" width="480" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+        </React.Fragment>}
         </div>
         )
     }

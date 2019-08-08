@@ -25,10 +25,9 @@ class SearchModal extends Component {
         super(props);
     }
     render(){
-        console.log(this.props.searchResults)
         return (
         <span className="search-modal">
-          <form className="search-form" onSubmit={(e)=>{this.props.submitSearch(e,this.props.zipcode)}}>
+          <form className="search-form" onSubmit={(e)=>{this.props.submitSearch(e, this.props.zipcode)}}>
             <label htmlFor = 'zipcode'>
               Zip Code
               </label>

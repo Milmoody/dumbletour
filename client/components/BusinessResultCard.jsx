@@ -2,21 +2,22 @@ import React from 'react';
 
 const BusinessResultCard = props =>{
   
-  function formatDescription (desc) {
-    if (desc.length > 100) return desc.subStr(0, 100) + '..img.';
-    return desc;
-  }
+  // console.log(props);
   return (
   <div className="result-card business-card">
-    <img className = 'card-img' src={props.imgUrl}></img>
-    <h2 className="card-name"><a href = {props.website}>{props.name}</a></h2>
-    <p className = 'card-start-end'>{props.starttime}-{props.endtime}</p>
-    <p className = 'card-category'>{props.category}</p>
-    <p className = 'card-description'>{formatDescription(props.description)}</p>
-    <p className = 'card-address'>{props.address}</p>
-    <p className="card-price">${props.price}</p>
-    }
-    <div className= "not-liked-heart"></div>
+    {props.openToAll ? <h1 className = 'openToAll'>Open to All</h1> : null}
+    {props.genderNeutralBathrooms ? <h1 className = 'genderNeutral'>Gender Neutral Bathrooms</h1> : null}
+    <img className = 'card-img' src={props.image}></img>
+    <h2 className="card-name"><a href = {props.url}>{props.name}</a></h2>
+    <div >
+    {props.categories.map((cat,idx) => {
+      <p key = {'cat'+idx} className = 'card-categories'>{cat}</p>
+    })}
+    </div>
+    <p  className = 'card-reviewCount'>{props.numReviews}</p>
+    <p className = 'card-price'>rating: {props.rating}, price: {props.price}</p>
+    <p className = 'card-address'>{props.location.display_address}</p>
+    <p className = 'card-phone'>{props.phone}</p>
   </div> 
 )}
 
