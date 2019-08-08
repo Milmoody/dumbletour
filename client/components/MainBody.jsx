@@ -9,7 +9,8 @@ import { log } from 'util';
 const mapStateToProps = (store) => ({
   searchBoxIsOpen: store.dumbletour.searchBoxIsOpen,
   zipcode: store.dumbletour.zipcode,
-  searchResults: store.dumbletour.searchResults,
+  eventBriteResults: store.dumbletour.eventBriteResults,
+  yelpResults: store.dumbletour.yelpResults
 }); 
 
 class MainBody extends Component{
@@ -24,7 +25,7 @@ class MainBody extends Component{
         ? <SearchModal /> 
         : <ResultsWrapper 
           searchBoxIsOpen = {this.props.searchBoxIsOpen}
-          eventSearchResults = {this.props.searchResults}></ResultsWrapper>}
+          eventBriteResults = {this.props.eventBriteResults}></ResultsWrapper>}
         </div>
         )
     }

@@ -7,10 +7,15 @@ export const updateLocation = value => ({
 });
 
 
-export const searchResults = results => ({
-  type: types.PROCESS_SEARCH_RESULTS,
+export const eventBriteResults = results => ({
+  type: types.PROCESS_EVENTBRITE_RESULTS,
   payload: results,
 });
+
+export const yelpResults = results => ({
+  type: types.PROCESS_YELP_RESULTS,
+  payload: results
+})
 
 export const setView = view => ({
   type: types.SET_VIEW,
@@ -24,36 +29,32 @@ export const updateZipCode = zipcode => ({
 
 // thunk that handles search request
 
-export const submitSearch = (zipcode) => (dispatch, getState) => {
+export const searchEventBrite = (zipcode) => (dispatch, getState) => {
   // make a fetch request to yelp / Eventbrite
   fetch('/api/search' , {
     method: 'POST',
     headers: { 'Content-type': 'application/json' },
-    body: JSON.stringify({
-      zipcode
-    }),
+    body: JSON.stringify({zipcode}),
   })
   .then( res => res.json())
   .then((resultsArr)=>{
     console.log(resultsArr)
-    dispatch(searchResults(resultsArr));
+    dispatch(eventBriteResults(resultsArr));
   })
   // promise.all - and send the results back to the client. 
 };
 
-// thunk that adds itinerary item
-export const addToItineraryRequest = id => (dispatch, getState) => {
-  const { user } = getState().dumbletour;
+export const searchYelp = (zipcode) => (dispatch,getState) => {
 
-  fetch('/api/itinerary/add', {
-    method: 'PUT',
+  fetch('/api/businesses', {
+    method: 'POST',
     headers: { 'Content-type': 'application/json' },
-    body: JSON.stringify({
-      user, id,
-    }),
+    body: JSON.stringify({zipcode}),
   })
-    .then(() => dispatch(addToItinerary(id)))
-    .catch((err) => {
-      console.log('There was an error in the thunk: ', err)
-    });
-};
+  .then( res => res.json())
+  .then((resultsArr) => {
+    dispatch(yelpResults(resultsArr))
+  })
+}
+
+// thunk that adds itinerary item
