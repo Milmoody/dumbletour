@@ -15,7 +15,7 @@ router.put('/itinerary/remove', apiController.removeItinerary, (req, res) => {
 });
 
 // yelp query
-router.post('/businesses', apiController.yelpQuery, (req, res) => {
+router.post('/businesses', apiController.gnBathQuery, apiController.openQuery, apiController.mergeQueries, (req, res) => {
   res.status(200).send(res.locals.data);
 });
 

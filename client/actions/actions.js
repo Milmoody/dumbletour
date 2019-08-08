@@ -31,8 +31,6 @@ export const submitSearch = () => (dispatch, getState) => {
   // dispatch(searchResults([{company: "Pikachu", price: 42, hashtag: 'pikaPIKAAAA'}]))
 };
 
-
-
 // thunk that adds itinerary item
 export const addToItineraryRequest = id => (dispatch, getState) => {
   const { user } = getState().dumbletour;
