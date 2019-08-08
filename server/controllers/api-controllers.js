@@ -4,9 +4,7 @@ const Data = require('./../db/mongo/mock-data.js');
 const User = require('./../db/mongo/user-model.js');
 const authKeys = require('./../oauth-config/auth-keys.js');
 const fetch = require('isomorphic-fetch')
-
 const apiController = {};
-
 // Search against mongo DB
 // apiController.search = (req, res, next) => {
 //   Data.find({ lat: req.body.latitude, lon: req.body.latitude, date_open: { $gte: new Date(req.body.arrivalDate) }, date_close: { $lte: new Date(req.body.departureDate)} }).toArray((error, result) => {
@@ -18,7 +16,6 @@ const apiController = {};
 //   })
 //   next();
 // }
-
 apiController.searchEventbrite = (req, res, next) => {
   let eventsArr = [];
   
@@ -39,7 +36,6 @@ apiController.searchEventbrite = (req, res, next) => {
       // console.log('events arr', eventsArr)
       return eventsArr;
     }))}
-
   Promise.all(promises)
   .then(result => {
     let eventsArr = [];
@@ -77,30 +73,31 @@ apiController.searchEventbrite = (req, res, next) => {
       };
       return newEl;
     })
-    .catch((err) => {
-      console.log('There was an error with the eventbrite API request', err);
-    });
-};
-
-
+    res.locals.ids = queryArray.map(el => el.id);
+    res.locals.venueIds = queryArray.map(el => el.venueId);
+    res.locals.eResult = queryArray;
+    return next()
+  })
+  .catch(err => {
+    console.log('There was an error with the eventbrite API request', err)
+  })
+  
+}
 apiController.eventbritePrices = (req, res, next) => {
-  const prices = {};
-
-  const promises = res.locals.ids.map((id) => 
+  let prices = {};
+    let promises = res.locals.ids.map(id => {
       //Fetch ticket prices from Eventbrite
-       fetch(`https://www.eventbriteapi.com/v3/events/${id}/ticket_classes/`, {
+      return fetch(`https://www.eventbriteapi.com/v3/events/${id}/ticket_classes/`, {
         type: 'GET',
         headers: {
           "Authorization": "Bearer "+ authKeys.eventbrite.privateToken,
         }
       })
       .then(data => data.json())
-
       //pull out ticket prices and push into prices array on res.locals
       .then(ticket => {
         if(ticket.ticket_classes[0] && ticket.ticket_classes[0].cost){
           prices[id] = ticket.ticket_classes[0].cost.display
-
         } else {
           prices[id] = 'free'
         }
@@ -112,16 +109,15 @@ apiController.eventbritePrices = (req, res, next) => {
     .then(result => {
       res.locals.prices = prices;
       // console.log('res.locals.prices',res.locals.prices)
-      return next();
-    });
-};
-
+      return next()
+    } )
+}
 apiController.eventbriteLocations = (req, res, next) => {
   let locations = {};
   //create array of promises to fetch data for each id
     let promises = res.locals.venueIds.map(venueId => {
       //Fetch ticket prices from Eventbrite
-       fetch(`https://www.eventbriteapi.com/v3/venues/${venueId}/`, {
+      return fetch(`https://www.eventbriteapi.com/v3/venues/${venueId}/`, {
         type: 'GET',
         headers: {
           "Authorization": "Bearer "+ authKeys.eventbrite.privateToken,
@@ -154,17 +150,16 @@ apiController.eventbriteLocations = (req, res, next) => {
     Promise.all(promises)
     .then(result => {
       res.locals.locations = locations;
-      return next();
-    });
-};
-
+      return next()
+    } )
+}
 apiController.eventParse = (req, res, next) => {
   events = res.locals.eResult;
-  prices = res.locals.prices;
+  prices = res.locals.prices; 
   // console.log('prices:  ', res.locals.prices)
   locations = res.locals.locations;
   // console.log('locations: ', res.locals.locations)
-  for (let i = 0; i < events.length; i++) {
+  for(let i = 0; i < events.length; i++){
     venueIdNum = events[i].venueId;
     venueId = venueIdNum.toString();
     // console.log(venueId)
@@ -180,7 +175,7 @@ apiController.eventParse = (req, res, next) => {
   }
   res.locals.eResultClean = events;
   return next();
-};
+}
 
 apiController.addItinerary = (req, res, next) => {
   User.findOneAndUpdate({ username: req.body.username }, { $push: { itinerary: req.body.event } }, { new: true, useFindAndMondify: false }, (error, itinerary) => {
