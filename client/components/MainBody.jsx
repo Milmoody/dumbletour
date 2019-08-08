@@ -8,7 +8,8 @@ import SearchModal from './SearchModal.jsx';
 const mapStateToProps = (store) => ({
   searchBoxIsOpen: store.dumbletour.searchBoxIsOpen,
   zipcode: store.dumbletour.zipcode,
-  searchResults: store.dumbletour.searchResults,
+  eventBriteResults: store.dumbletour.eventBriteResults,
+  yelpResults: store.dumbletour.yelpResults
 }); 
 
 class MainBody extends Component{
@@ -22,7 +23,7 @@ class MainBody extends Component{
         ? <SearchModal /> 
         : <ResultsWrapper 
           searchBoxIsOpen = {this.props.searchBoxIsOpen}
-          eventBriteResults = {this.props.searchResults}></ResultsWrapper>}
+          eventBriteResults = {this.props.eventBriteResults}></ResultsWrapper>}
         </div>
         )
     }
