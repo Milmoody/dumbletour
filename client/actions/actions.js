@@ -23,6 +23,7 @@ export const updateZipCode = zipcode => ({
 })
 
 // thunk that handles search request
+
 export const submitSearch = (zipcode) => (dispatch, getState) => {
   // make a fetch request to yelp / Eventbrite
   fetch('/api');
