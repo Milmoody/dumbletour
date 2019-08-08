@@ -5,7 +5,8 @@ import * as actions from '../actions/actions.js';
 const mapStateToProps = (store) => ({
     searchBoxIsOpen: store.dumbletour.searchBoxIsOpen,
     zipcode: store.dumbletour.zipcode,
-    searchResults: store.dumbletour.searchResults
+    eventBrite: store.dumbletour.eventBriteResults,
+    yelpResults: store.dumbletour.yelpResults
 });
 
 const mapDispatchToProps = dispatch =>({
@@ -14,7 +15,8 @@ const mapDispatchToProps = dispatch =>({
     },
     submitSearch: (e,zipcode) => {
         e.preventDefault()
-        dispatch(actions.submitSearch(zipcode));
+        dispatch(actions.searchEventBrite(zipcode));
+        dispatch(actions.searchYelp(zipcode));
     }
 })   
 
