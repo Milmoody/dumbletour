@@ -15,15 +15,6 @@ class MainBody extends Component{
         super(props);
     }
     render(){
-        const resultCards = this.props.searchResults.map((r) => {
-          return <ResultCard  key={r.name} 
-                              imgUrl={r.imgUrl}
-                              name={r.name} 
-                              price={r.price}
-                              www={r.www}
-                              ig={r.ig}
-                              id={r.id}
-                              />;});
         return(
         <div className={this.props.searchBoxIsOpen ? "main-body-with-modal": "main-body-without-modal" }>
           {this.props.searchBoxIsOpen ? 
@@ -32,7 +23,6 @@ class MainBody extends Component{
           </Fragment>
           : null}
           <section className="result-cards">
-          {resultCards}
           </section>
         </div>
         )
