@@ -12,8 +12,18 @@ export const searchResults = results => ({
   payload: results,
 });
 
+export const setView = view => ({
+  type: types.SET_VIEW,
+  payload: view
+})
+
+export const updateZipCode = zipcode => ({
+  type: types.UPDATE_ZIP_CODE,
+  payload: zipcode,
+})
 
 // thunk that handles search request
+
 export const submitSearch = () => (dispatch, getState) => {
   const { zipcode } = getState().dumbletour;
   fetch('/api/businesses', {
@@ -29,23 +39,4 @@ export const submitSearch = () => (dispatch, getState) => {
       console.log('There was an error in the thunk: ', err)
     });
   // dispatch(searchResults([{company: "Pikachu", price: 42, hashtag: 'pikaPIKAAAA'}]))
-};
 
-
-
-// thunk that adds itinerary item
-export const addToItineraryRequest = id => (dispatch, getState) => {
-  const { user } = getState().dumbletour;
-
-  fetch('/api/itinerary/add', {
-    method: 'PUT',
-    headers: { 'Content-type': 'application/json' },
-    body: JSON.stringify({
-      user, id,
-    }),
-  })
-    .then(() => dispatch(addToItinerary(id)))
-    .catch((err) => {
-      console.log('There was an error in the thunk: ', err)
-    });
-};
