@@ -2,11 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const Data = require('./../db/mongo/mock-data.js');
 const User = require('./../db/mongo/user-model.js');
-const authKeys = require('../oauth-config/auth-keys.js');
+const authKeys =  require('../oauth-config/auth-keys.js');
 const fetch = require('isomorphic-fetch')
-
 const apiController = {};
-
 // Search against mongo DB
 // apiController.search = (req, res, next) => {
 //   Data.find({ lat: req.body.latitude, lon: req.body.latitude, date_open: { $gte: new Date(req.body.arrivalDate) }, date_close: { $lte: new Date(req.body.departureDate)} }).toArray((error, result) => {
@@ -18,22 +16,38 @@ const apiController = {};
 //   })
 //   next();
 // }
-
 apiController.searchEventbrite = (req, res, next) => {
-  const location = "Venice Beach";
-  fetch(
-    `https://www.eventbriteapi.com/v3/events/search/?location.address=${location}&location.within=1km`,
-    {
-    method: 'GET',
-    headers:{
-      "Authorization": "Bearer "+ authKeys.eventbrite.publicToken,
-    }
-  })
-  .then(data => data.json())
+  let eventsArr = [];
+  
+  const location = req.body.location || "Venice Beach";
+  let queery = ['gay','lgbt','queer','trans','transgender','bisexual','drag show'];
+  let promises =[];
+  for(let i = 0; i < queery.length; i++){ 
+    promises.push(fetch(`https://www.eventbriteapi.com/v3/events/search/?q=${queery[i]}&location.address=${location}&location.within=10km`,
+      {
+      method: 'GET',
+      headers:{
+        "Authorization": "Bearer "+ authKeys.eventbrite.publicToken,
+      }
+    })
+    .then(data => data.json())
+    .then(result => {
+      eventsArr =[...result.events];
+      // console.log('events arr', eventsArr)
+      return eventsArr;
+    }))}
+  Promise.all(promises)
   .then(result => {
-    let queryArray = result.events.map(el => {
-      // console.log('New ELEMENT', el);
-      let imgUrl = el.logo ? el.logo.original.url : null;
+    let eventsArr = [];
+    for(let i = 0; i < result.length; i++){
+      console.log(result[i]);
+      eventsArr.push(...result[i])
+    }
+    return eventsArr;
+  })
+  .then(result => {
+    let queryArray = result.map(el => {
+      const imgUrl = el.logo ? el.logo.original.url : null;
       let newEl = {
         name: el.name.text,
         //handles events with no image URLs
@@ -61,11 +75,8 @@ apiController.searchEventbrite = (req, res, next) => {
   })
   
 }
-
-
 apiController.eventbritePrices = (req, res, next) => {
   let prices = {};
-
     let promises = res.locals.ids.map(id => {
       //Fetch ticket prices from Eventbrite
       return fetch(`https://www.eventbriteapi.com/v3/events/${id}/ticket_classes/`, {
@@ -75,13 +86,12 @@ apiController.eventbritePrices = (req, res, next) => {
         }
       })
       .then(data => data.json())
-
       //pull out ticket prices and push into prices array on res.locals
       .then(ticket => {
         // console.log('ticket', ticket)
-        if(ticket.ticket_classes[0].cost){
+        if(ticket.ticket_classes.length > 0){
           // res.locals.prices[id] = ticket.ticket_classes[0].cost.display;
-          prices[id] = ticket.ticket_classes[0].cost.display
+          if (ticket.ticket_classes[0].cost) prices[id] = ticket.ticket_classes[0].cost.display
 
         } else {
           // console.log('ticket ', ticket)
@@ -103,7 +113,6 @@ apiController.eventbritePrices = (req, res, next) => {
       return next()
     } )
 }
-
 apiController.eventbriteLocations = (req, res, next) => {
   // res.locals.locations = {};
   locations = {};
@@ -142,7 +151,6 @@ apiController.eventbriteLocations = (req, res, next) => {
       return next()
     } )
 }
-
 apiController.eventParse = (req, res, next) => {
   events = res.locals.eResult;
   prices = res.locals.prices; 
