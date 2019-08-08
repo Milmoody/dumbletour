@@ -22,7 +22,7 @@ class MainBody extends Component{
         ? <SearchModal /> 
         : <ResultsWrapper 
           searchBoxIsOpen = {this.props.searchBoxIsOpen}
-          searchResults = {this.props.searchResults}></ResultsWrapper>}
+          eventBriteResults = {this.props.searchResults}></ResultsWrapper>}
         </div>
         )
     }

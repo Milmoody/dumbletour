@@ -7,7 +7,7 @@ const ResultsWrapper = (props) => {
   const events = [];
   const maps = [];
   const businesses = [];
-  props.searchResults.forEach((r, idx) => {
+  props.eventBriteResults.forEach((r, idx) => {
     maps.push({...r});
     events.push(<ResultCard key = {'event-result' + idx} {...r} />);
   });
