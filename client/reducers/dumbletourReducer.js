@@ -4,7 +4,6 @@ const initialState = {
   searchBoxIsOpen: true,
   location: '',
   searchResults: [],
-  itinerary: {},
   view:'EVENTS',
   zipcode:''
 };
@@ -20,12 +19,12 @@ const dumbletourReducer = (state = initialState, action) => {
     }
 
     case types.PROCESS_SEARCH_RESULTS: {
-      const searchResults = [action.payload]
+      const searchResults = action.payload
       const searchBoxIsOpen = false;
 
       return {
         ...state,
-        searchResults,
+        searchResults: searchResults,
         searchBoxIsOpen
       }
     }

@@ -3,7 +3,7 @@ const path = require('path');
 const Data = require('./../db/mongo/mock-data.js');
 const User = require('./../db/mongo/user-model.js');
 const billy = require('./../db/sql/postgres-billy.js');
-const authKeys = require('./../oauth-config/auth-keys');
+const authKeys = require('../../authkeys');
 const fetch = require('isomorphic-fetch')
 
 const apiController = {};
@@ -101,11 +101,11 @@ apiController.eventbritePrices = (req, res, next) => {
 
 
     })
-    console.log('promises: ', promises)
+    // console.log('promises: ', promises)
     Promise.all(promises)
     .then(result => {
       res.locals.prices = prices;
-      console.log('res.locals.prices',res.locals.prices)
+      // console.log('res.locals.prices',res.locals.prices)
       return next()
     } )
 }
@@ -152,13 +152,13 @@ apiController.eventbriteLocations = (req, res, next) => {
 apiController.eventParse = (req, res, next) => {
   events = res.locals.eResult;
   prices = res.locals.prices; 
-  console.log('prices:  ', res.locals.prices)
+  // console.log('prices:  ', res.locals.prices)
   locations = res.locals.locations;
-  console.log('locations: ', res.locals.locations)
+  // console.log('locations: ', res.locals.locations)
   for(let i = 0; i < events.length; i++){
     venueIdNum = events[i].venueId;
     venueId = venueIdNum.toString();
-    console.log(venueId)
+    // console.log(venueId)
     events[i]["address"] = locations[venueId].address;
     events[i]["latLong"] = locations[venueId].latLong;
     events[i]["price"] = prices[events[i].id];
@@ -169,13 +169,13 @@ apiController.eventParse = (req, res, next) => {
 
 apiController.addItinerary = (req, res, next) => {
   User.findOneAndUpdate({ username: req.body.username }, { $push: { itinerary: req.body.event } }, { new: true, useFindAndMondify: false }, (error, itinerary) => {
-    console.log('new itinerary(added) is:', itinerary);
+    // console.log('new itinerary(added) is:', itinerary);
     if (error) {
       const myError = new Error();
       myError.msg = error;
       return res.status(400).send(myError);
     } else {
-      console.log('itinerary successfully updated(item added)!')
+      // console.log('itinerary successfully updated(item added)!')
       return res.send(itinerary);
     }
   })

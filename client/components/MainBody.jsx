@@ -16,8 +16,6 @@ class MainBody extends Component{
         super(props);
     }
     render(){
-     
-        
         return(
         <div className="main-body-with-modal">
         {this.props.searchBoxIsOpen 
