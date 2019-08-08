@@ -3,7 +3,7 @@ import * as types from '../actions/actionTypes';
 const initialState = {
   searchBoxIsOpen: true,
   location: '',
-  searchResults: [],
+  eventBriteResults: [],
   view:'EVENTS',
   zipcode:''
 };
@@ -18,14 +18,22 @@ const dumbletourReducer = (state = initialState, action) => {
       };
     }
 
-    case types.PROCESS_SEARCH_RESULTS: {
-      const searchResults = action.payload
+    case types.PROCESS_EVENTBRITE_RESULTS: {
+      const eventBriteResults = action.payload
       const searchBoxIsOpen = false;
 
       return {
         ...state,
-        searchResults: searchResults,
+        eventBriteResults: eventBriteResults,
         searchBoxIsOpen
+      }
+    }
+
+    case types.PROCESS_YELP_RESULTS:{
+      const yelpResults = action.payload
+      return {
+        ...state,
+        yelpResults: yelpResults
       }
     }
     case types.SET_VIEW: {

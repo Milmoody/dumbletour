@@ -17,7 +17,7 @@ const ResultsWrapper = (props) => {
     price: '2.64',
     category:'music',
   }
-  const resultCards = props.searchResults.map((r, idx) => {
+  const resultCards = props.eventBriteResults.map((r, idx) => {
     return <ResultCard key = {'event-result' + idx} {...mockdata} />;});
   return (
   <section className = 'results-wrapper'>
