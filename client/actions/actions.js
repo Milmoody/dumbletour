@@ -30,7 +30,7 @@ export const submitSearch = (zipcode) => (dispatch, getState) => {
     method: 'POST',
     headers: { 'Content-type': 'application/json' },
     body: JSON.stringify({
-      location
+      zipcode
     }),
   })
   .then( res => res.json())
