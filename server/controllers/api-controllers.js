@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const Data = require('./../db/mongo/mock-data.js');
 const User = require('./../db/mongo/user-model.js');
-const billy = require('./../db/sql/postgres-billy.js');
 const authKeys = require('../oauth-config/auth-keys.js');
 const fetch = require('isomorphic-fetch')
 
