@@ -35,11 +35,11 @@ export const addToItinerary = addedItem => ({
 
 // thunk that handles search request
 export const submitSearch = () => (dispatch, getState) => {
-  // const {
-  //   location, latitude, longitude, arrivalDate, departureDate,
-  // } = getState().dumbletour;
+//   const {
+//     location, latitude, longitude, arrivalDate, departureDate,
+//   } = getState().dumbletour;
   // console.log('location, latitude, longitude, arrivalDate, departureDate ', location, latitude, longitude, arrivalDate, departureDate);
-
+const { location } = getState().dumbletour;
   fetch('/api/search', {
     method: 'POST',
     headers: { 'Content-type': 'application/json' },

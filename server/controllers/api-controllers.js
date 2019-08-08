@@ -20,60 +20,11 @@ const apiController = {};
 //   next();
 // }
 
-// Search against Postgres DB and transfer to Mongo DB
-apiController.search = (req, res, next) => {
-  console.log('searchcontroller req body is:', req.body);
-  const queryArray = [];
-  // billy.query(`SELECT * FROM fake_data WHERE ST_DWithin(geom, ST_MakePoint(${req.body.latitude}, ${req.body.longitude})::geography, 5000000) AND date_open <= '${req.body.arrivalDate}' AND date_close >= '${req.body.departureDate}';`, (err, result) => {
-  //   console.log('the query happened')
-  //   if (err) console.log('we have an errr in search asda', err);
-  //   // res.send('suck');
-
-  //   console.log('result in search controller is:', result);
-
-    // result.rows.forEach(el => {
-    //   // console.log('HOOOYEE', el);
-    //   queryArray.push({
-    //     id,
-    //     address,
-    //     zip,
-    //     country,
-    //     phoneNumber,
-    //     lat,
-    //     lon,
-    //     price,
-    //     hashtag,
-    //     company,
-    //     date_open,
-    //     date_close,
-    //     image,
-    //     website,
-    //     rating,
-    //     geom,
-    //   } = el);
-  //   });
-
-  //   queryArray.forEach(el => {
-  //     new Data(el).save().then(result => result).catch(err => console.log('errrrrr', err));
-  //   })
-
-  //   console.log('qeuruearray', queryArray);
-
-  //   // // res.locals.result = queryArray;
-  //   return res.send(queryArray);
-  //   // User.insertMany(JSON.parse(result.rows), (error, documents) => {
-  //   //   console.log('Data successfully transferred to mongo DB', documents);
-  //   //   res.locals.mongoDocs = documents;
-  //   // })
-
-  // })
-  // res.locals.result = queryArray;
-  return next();
-}
-
 apiController.searchEventbrite = (req, res, next) => {
   const location = "Venice Beach";
-  fetch(`https://www.eventbriteapi.com/v3/events/search/?location.address=${location}&location.within=10km`, {
+  fetch(
+    `https://www.eventbriteapi.com/v3/events/search/?location.address=${location}&location.within=1km`,
+    {
     method: 'GET',
     headers:{
       "Authorization": "Bearer "+ authKeys.eventbrite.publicToken,
@@ -82,7 +33,7 @@ apiController.searchEventbrite = (req, res, next) => {
   .then(data => data.json())
   .then(result => {
     let queryArray = result.events.map(el => {
-      console.log('New ELEMENT', el);
+      // console.log('New ELEMENT', el);
       let newEl = {
         name: el.name.text,
         //handles events with no image URLs
@@ -106,8 +57,7 @@ apiController.searchEventbrite = (req, res, next) => {
       };
       return newEl;
     })
-    let idsArr = queryArray.map(el => el.id);
-    res.locals.ids = idsArr;
+    res.locals.ids = queryArray.map(el => el.id);
     res.locals.venueIds = queryArray.map(el => el.venueId);
     res.locals.eResult = queryArray;
     return next()
@@ -120,11 +70,11 @@ apiController.searchEventbrite = (req, res, next) => {
 
 
 apiController.eventbritePrices = (req, res, next) => {
-  res.locals.prices = [];
-    res.locals.ids.forEach(id => {
+  let prices = {};
 
+    let promises = res.locals.ids.map(id => {
       //Fetch ticket prices from Eventbrite
-      fetch(`https://www.eventbriteapi.com/v3/events/${id}/ticket_classes/`, {
+      return fetch(`https://www.eventbriteapi.com/v3/events/${id}/ticket_classes/`, {
         type: 'GET',
         headers: {
           "Authorization": "Bearer "+ authKeys.eventbrite.privateToken,
@@ -136,22 +86,37 @@ apiController.eventbritePrices = (req, res, next) => {
       .then(ticket => {
         // console.log('ticket', ticket)
         if(ticket.ticket_classes[0].cost){
-        res.locals.prices.push( { id: ticket.ticket_classes[0].cost.display})
+          // res.locals.prices[id] = ticket.ticket_classes[0].cost.display;
+          prices[id] = ticket.ticket_classes[0].cost.display
+
         } else {
           // console.log('ticket ', ticket)
-          res.locals.prices.push({id: 'free'})
+          // res.locals.prices[id] = 'free'
+          prices[id] = 'free'
+
         }
-        return next();
+        return prices
+        // console.log("prices: ", res.locals.prices)
       }).catch(err => {console.log('There was an error fetching prices', err)})
+
+
     })
+    console.log('promises: ', promises)
+    Promise.all(promises)
+    .then(result => {
+      res.locals.prices = prices;
+      console.log('res.locals.prices',res.locals.prices)
+      return next()
+    } )
 }
 
 apiController.eventbriteLocations = (req, res, next) => {
-  res.locals.locations = [];
-    res.locals.venueIds.forEach(venueId => {
-
+  // res.locals.locations = {};
+  locations = {};
+    let promises = res.locals.venueIds.map(venueId => {
+      // console.log(venueId)
       //Fetch ticket prices from Eventbrite
-      fetch(`https://www.eventbriteapi.com/v3/venues/${venueId}/`, {
+      return fetch(`https://www.eventbriteapi.com/v3/venues/${venueId}/`, {
         type: 'GET',
         headers: {
           "Authorization": "Bearer "+ authKeys.eventbrite.privateToken,
@@ -162,19 +127,44 @@ apiController.eventbriteLocations = (req, res, next) => {
       //pull out addresses and push into prices array on res.locals
       .then(venue => {
         if(venue.address.localized_address_display && venue.latitude && venue.longitude){
-          res.locals.locations.push({ 
-            venueId: 
+          // res.locals.locations[venueId] = 
+          locations[venueId] =
               {
                 address: venue.address.localized_address_display,
                 latLong: [venue.latitude, venue.longitude]
               }
-          })
         } else {
-          res.locals.locations.push({venueId: 'No location found'})
+          // res.locals.locations[venueId] = 'No location found'
+          locations[venueId] = 'No location found'
         }
-        return next();
+        // console.log(res.locals.locations)
+        // return next();
+        return locations
       }).catch(err => {console.log('There was an error fetching locations', err)})
     })
+    Promise.all(promises)
+    .then(result => {
+      res.locals.locations = locations;
+      return next()
+    } )
+}
+
+apiController.eventParse = (req, res, next) => {
+  events = res.locals.eResult;
+  prices = res.locals.prices; 
+  console.log('prices:  ', res.locals.prices)
+  locations = res.locals.locations;
+  console.log('locations: ', res.locals.locations)
+  for(let i = 0; i < events.length; i++){
+    venueIdNum = events[i].venueId;
+    venueId = venueIdNum.toString();
+    console.log(venueId)
+    events[i]["address"] = locations[venueId].address;
+    events[i]["latLong"] = locations[venueId].latLong;
+    events[i]["price"] = prices[events[i].id];
+  }
+  res.locals.eResultClean = events;
+  return next();
 }
 
 apiController.addItinerary = (req, res, next) => {

@@ -11,19 +11,19 @@ $btn-color: rgb(115, 216, 203);
 
 
 // Dumble colors
-$primary-col: rgb(17,36,68);
+$primary-col: rgb(138, 79, 187);
 // $primary-text-col: rgb(228,36,68);
 $primary-text-col: rgb(228,232,240);
 
 $secondary-col: rgb(138, 127, 167);
-$accent-col: #883a59;
+$accent-col: #ccb220;
 $light-accent-col: #eee2d91c;
 // $light-accent-col: rgb(225, 186, 108);
 $dumble-nav-bar-col: $primary-col;
 $dumble-result-card-col: lighten($dumble-nav-bar-col,45%);
 $dumble-result-card-bor-col: #70809008;
-$dumble-search-modal-col: rgb(240, 181, 63);
-$dumble-search-modal-bor-col: #bfa87a;
+$dumble-search-modal-col: rgb(138, 79, 187);
+$dumble-search-modal-bor-col: #b9964e;
 $dumble-price-col: #a70f0fe5;
 $dubmle-ig-www-col: #000000bd;
 $dumble-heart-color: white;
@@ -66,11 +66,13 @@ body {
 .search-modal{
   display: flex;
   flex-direction: column;
-  height: 600px;
+  height: 300px;
   width: 400px;
   padding-top: 20px;
   padding-left: 25px;
   background-color: $dumble-search-modal-col;
+  box-shadow: 10px 10px 10px #bbb;
+  border-radius: 5px;
   font-size: 1.5rem;
   margin-top: 200px;
   border: 1px solid $dumble-search-modal-bor-col;
@@ -78,9 +80,9 @@ body {
 
   input {
     padding-left: 10px;
-    margin-top: 10px;
     width: inherit;
     font-size: 1.3rem;
+    border-radius: 5px;
     width: 350px;
     height: 50px;
     border: solid 1px $dumble-search-modal-bor-col;
@@ -89,11 +91,13 @@ body {
     font-family: 'Baloo Chettan', cursive;
     font-weight: lighter;
     font-size: 1.6rem;
+    border-radius: 5px;
     width: 350px;
     height: 60px;
     color: $primary-text-col;
     background-color: $accent-col;
     border: none;
+    cursor: pointer;
   }
 }
 
