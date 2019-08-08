@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import MainBody from './MainBody.jsx';
 import NavBar from './NavBar.jsx';
 
@@ -10,4 +9,4 @@ const Wrapper = props =>(
     </React.Fragment>
 )
 
-export default Wrapper
+export default Wrapper;

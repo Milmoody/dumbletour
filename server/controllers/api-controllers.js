@@ -3,7 +3,7 @@ const path = require('path');
 const Data = require('./../db/mongo/mock-data.js');
 const User = require('./../db/mongo/user-model.js');
 const billy = require('./../db/sql/postgres-billy.js');
-const authKeys = require('./../oauth-config/auth-keys');
+const authKeys = require('./../oauth-config/auth-keys.js');
 const fetch = require('isomorphic-fetch')
 
 const apiController = {};
@@ -40,16 +40,7 @@ apiController.searchEventbrite = (req, res, next) => {
       // console.log('events arr', eventsArr)
       return eventsArr;
     }))}
-  //***** ORIGINAL API FETCH */
-  // fetch(
-  //   `https://www.eventbriteapi.com/v3/events/search/?location.address=${location}&location.within=1km`,
-  //   {
-  //   method: 'GET',
-  //   headers:{
-  //     "Authorization": "Bearer "+ authKeys.eventbrite.publicToken,
-  //   }
-  // })
-  // .then(data => data.json())
+
   Promise.all(promises)
   .then(result => {
     let eventsArr = [];
@@ -59,7 +50,7 @@ apiController.searchEventbrite = (req, res, next) => {
     // console.log('________RESULT____________',result[0][0]);
     // let events = new Set(eventsArr)
     // events = [...events]
-    console.log('---------EVENTS ------------', eventsArr[0][0])
+    // console.log('---------EVENTS ------------', eventsArr[0][0])
     return eventsArr;
   })
   .then(result => {
@@ -114,7 +105,7 @@ apiController.eventbritePrices = (req, res, next) => {
 
       //pull out ticket prices and push into prices array on res.locals
       .then(ticket => {
-        if(ticket.ticket_classes[0].cost){
+        if(ticket.ticket_classes[0] && ticket.ticket_classes[0].cost){
           prices[id] = ticket.ticket_classes[0].cost.display
 
         } else {
@@ -127,7 +118,7 @@ apiController.eventbritePrices = (req, res, next) => {
     Promise.all(promises)
     .then(result => {
       res.locals.prices = prices;
-      console.log('res.locals.prices',res.locals.prices)
+      // console.log('res.locals.prices',res.locals.prices)
       return next()
     } )
 }
@@ -200,13 +191,13 @@ apiController.eventParse = (req, res, next) => {
 
 apiController.addItinerary = (req, res, next) => {
   User.findOneAndUpdate({ username: req.body.username }, { $push: { itinerary: req.body.event } }, { new: true, useFindAndMondify: false }, (error, itinerary) => {
-    console.log('new itinerary(added) is:', itinerary);
+    // console.log('new itinerary(added) is:', itinerary);
     if (error) {
       const myError = new Error();
       myError.msg = error;
       return res.status(400).send(myError);
     } else {
-      console.log('itinerary successfully updated(item added)!')
+      // console.log('itinerary successfully updated(item added)!')
       return res.send(itinerary);
     }
   })
@@ -227,5 +218,47 @@ apiController.removeItinerary = (req, res, next) => {
   })
   // return next();
 }
+
+//add yelp query
+apiController.yelpQuery = (req, res, next) => {
+  console.log(req.body);
+  const search = 'food';
+  const location = req.body.zipcode || '90292';
+  fetch(`https://api.yelp.com/v3/businesses/search?location=${location}&term=${search}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: "Bearer " + authKeys.yelp.apiKey,
+    }
+  })
+  .then(response => response.json())
+  .then(myJson => {
+    const businesses = [];
+    for(let i = 0; i < myJson.businesses.length; i++) {
+      let obj = {};
+      obj.id = myJson.businesses[i].id;
+      obj.name = myJson.businesses[i].name;
+      obj.image = myJson.businesses[i].image_url;
+      obj.location = myJson.businesses[i].location;
+      obj.phone = myJson.businesses[i].display_phone;
+      obj.url = myJson.businesses[i].url;
+      obj.numReviews = myJson.businesses[i].review_count;
+      obj.rating = myJson.businesses[i].rating;
+      obj.price = myJson.businesses[i].price ? myJson.businesses[i].price: 'unknown';
+      obj.categories = (function makeArr() {
+        const catArr = [];
+        myJson.businesses[i].categories.forEach(obj => catArr.push(obj.title))
+        return catArr;
+      })();
+      obj.latlong = [myJson.businesses[i].coordinates.latitude, myJson.businesses[i].coordinates.longitude];
+      businesses.push(obj);
+    }
+    // console.log(businesses);
+    res.locals.data = businesses;
+    next();
+  })
+  .catch(error => console.error('Error:', error));
+
+};
 
 module.exports = apiController;

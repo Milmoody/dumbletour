@@ -3,6 +3,6 @@ dist/*.js
 .DS_Store
 npm-debug.log
 .env
-server/oauth-config/auth-keys.js
 package-lock.json
 .vscode
+authkeys.js

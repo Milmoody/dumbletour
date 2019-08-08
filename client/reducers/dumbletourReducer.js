@@ -4,7 +4,8 @@ const initialState = {
   searchBoxIsOpen: true,
   location: '',
   searchResults: [],
-  itinerary: {},
+  view:'EVENTS',
+  zipcode:''
 };
 
 const dumbletourReducer = (state = initialState, action) => {
@@ -17,32 +18,30 @@ const dumbletourReducer = (state = initialState, action) => {
       };
     }
 
-    case types.SUBMIT_SEARCH: {
-      const searchBoxIsOpen = false;
-      const toLog = {
-        ...state,
-        searchBoxIsOpen,
-      };
-      return toLog;
-    }
-
     case types.PROCESS_SEARCH_RESULTS: {
-      const transformedResults = action.payload.map((event) => ({
-        // imgUrl: 'http://via.placeholder.com/350x460',
-        imgUrl: 'https://i.imgur.com/IVf2QCK.jpg',
-        name: event.company,
-        price: event.price,
-        www: 'www.expelliarmus.aragog',
-        ig: event.hashtag.toLowerCase(),
-      }));
+      const searchResults = action.payload
       const searchBoxIsOpen = false;
+
       return {
         ...state,
-        searchResults: [...transformedResults],
-        searchBoxIsOpen,
-      };
+        searchResults: searchResults,
+        searchBoxIsOpen
+      }
     }
-
+    case types.SET_VIEW: {
+      const newView = action.payload;
+      return {
+        ...state,
+        view: newView
+      }
+    }
+    case types.UPDATE_ZIP_CODE:{
+      const newZip = action.payload;
+      return{
+        ...state,
+        zipcode: newZip
+      }
+    }
     default:
       return state;
   }
