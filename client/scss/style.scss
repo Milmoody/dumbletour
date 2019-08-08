@@ -166,6 +166,7 @@ body {
   }
   .card-img {
     margin: 0 auto;
+    max-width: 100%;
   }
   .card-category {
     text-transform: uppercase;
@@ -176,7 +177,6 @@ body {
     font-size: 1.5rem;
     color: $dumble-price-col;
   }
-  
   .card-www{
     color: $dubmle-ig-www-col;
   }

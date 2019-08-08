@@ -49,7 +49,7 @@ const ResultsWrapper = (props) => {
     ? <section className = 'business-result-cards'>
       <h1>Businesses</h1>
     </section>
-    : <Map eventLatlong = {...maps}></Map>
+    : <Map {...maps}></Map>
     }
   </section>
     
