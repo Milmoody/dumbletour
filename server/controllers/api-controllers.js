@@ -103,8 +103,9 @@ apiController.removeItinerary = (req, res, next) => {
 
 //add yelp query
 apiController.yelpQuery = (req, res, next) => {
+  console.log(req.body);
   const search = 'food';
-  const location = 90292;
+  const location = req.body.zipcode || '90292';
   fetch(`https://api.yelp.com/v3/businesses/search?location=${location}&term=${search}`, {
     method: 'GET',
     headers: {
@@ -134,7 +135,7 @@ apiController.yelpQuery = (req, res, next) => {
       obj.latlong = [myJson.businesses[i].coordinates.latitude, myJson.businesses[i].coordinates.longitude];
       businesses.push(obj);
     }
-    console.log(businesses);
+    // console.log(businesses);
     res.locals.data = businesses;
     next();
   })

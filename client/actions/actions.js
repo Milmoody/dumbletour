@@ -35,8 +35,23 @@ export const addToItinerary = addedItem => ({
 
 // thunk that handles search request
 export const submitSearch = () => (dispatch, getState) => {
-  dispatch(searchResults([{company: "Pikachu", price: 42, hashtag: 'pikaPIKAAAA'}]))
+  const { zipcode } = getState().dumbletour;
+  fetch('/api/businesses', {
+    method: 'POST',
+    headers: { 'Content-type': 'application/json' },
+    body: JSON.stringify({
+      zipcode
+    }),
+  })
+    .then(res => res.json())
+    .then(json => console.log(json))
+    .catch((err) => {
+      console.log('There was an error in the thunk: ', err)
+    });
+  // dispatch(searchResults([{company: "Pikachu", price: 42, hashtag: 'pikaPIKAAAA'}]))
 };
+
+
 
 // thunk that adds itinerary item
 export const addToItineraryRequest = id => (dispatch, getState) => {
