@@ -34,9 +34,8 @@ export const submitSearch = () => (dispatch, getState) => {
     }),
   })
     .then(res => res.json())
-    .then(json => console.log(json))
+    .then(json => dispatch(searchResults(json)))
     .catch((err) => {
       console.log('There was an error in the thunk: ', err)
     });
-  // dispatch(searchResults([{company: "Pikachu", price: 42, hashtag: 'pikaPIKAAAA'}]))
-
+  }

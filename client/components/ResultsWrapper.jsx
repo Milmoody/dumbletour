@@ -17,8 +17,14 @@ const ResultsWrapper = (props) => {
     price: '2.64',
     category:'music',
   }
-  const resultCards = props.searchResults.map((r, idx) => {
-    return <ResultCard key = {'event-result' + idx} {...mockdata} />;});
+  const maps = [];
+  const events = [];
+  const businesses = [];
+  props.eventSearchResults.forEach((r, idx) => {
+    console.log(r);
+  events.push(<ResultCard key = {'event-result' + idx} {...r} />);
+  maps.push({...r});
+});
   return (
   <section className = 'results-wrapper'>
     <nav className = 'results-nav'>
@@ -37,13 +43,13 @@ const ResultsWrapper = (props) => {
     </nav>
     {active === 'EVENTS' 
     ? <section className="result-cards">
-    {resultCards}
+    {events}
     </section>
     : active === 'BUSINESSES' 
     ? <section className = 'business-result-cards'>
       <h1>Businesses</h1>
     </section>
-    : <Map></Map>
+    : <Map eventLatlong = {...maps}></Map>
     }
   </section>
     

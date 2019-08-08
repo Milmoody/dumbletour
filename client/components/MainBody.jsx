@@ -4,6 +4,7 @@ import ResultCard from './ResultCard.jsx'
 import ResultsWrapper from './ResultsWrapper.jsx';
 import * as actions from '../actions/actions.js';
 import SearchModal from './SearchModal.jsx';
+import { log } from 'util';
 
 const mapStateToProps = (store) => ({
   searchBoxIsOpen: store.dumbletour.searchBoxIsOpen,
@@ -15,16 +16,16 @@ class MainBody extends Component{
     constructor(props){
         super(props);
     }
+
     render(){
-     
-        
+      console.log(this.props.searchResults);
         return(
         <div className="main-body-with-modal">
         {this.props.searchBoxIsOpen 
         ? <SearchModal /> 
         : <ResultsWrapper 
           searchBoxIsOpen = {this.props.searchBoxIsOpen}
-          searchResults = {this.props.searchResults}></ResultsWrapper>}
+          eventSearchResults = {this.props.searchResults}></ResultsWrapper>}
         </div>
         )
     }
