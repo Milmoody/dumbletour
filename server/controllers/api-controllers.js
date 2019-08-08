@@ -20,7 +20,8 @@ const apiController = {};
 // }
 
 apiController.searchEventbrite = (req, res, next) => {
-  const location = "Venice Beach";
+  const location = req.body.zipcode;
+  console.log(req.body.zipcode)
   fetch(
     `https://www.eventbriteapi.com/v3/events/search/?location.address=${location}&location.within=1km`,
     {

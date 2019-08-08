@@ -29,9 +29,7 @@ export const submitSearch = (zipcode) => (dispatch, getState) => {
   fetch('/api/search' , {
     method: 'POST',
     headers: { 'Content-type': 'application/json' },
-    body: JSON.stringify({
-      location
-    }),
+    body: JSON.stringify({zipcode}),
   })
   .then( res => res.json())
   .then((resultsArr)=>{
