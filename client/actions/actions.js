@@ -41,7 +41,6 @@ export const submitSearch = (zipcode) => (dispatch, getState) => {
   // promise.all - and send the results back to the client. 
 };
 
-<<<<<<< HEAD
 // thunk that adds itinerary item
 export const addToItineraryRequest = id => (dispatch, getState) => {
   const { user } = getState().dumbletour;
@@ -58,5 +57,3 @@ export const addToItineraryRequest = id => (dispatch, getState) => {
       console.log('There was an error in the thunk: ', err)
     });
 };
-=======
->>>>>>> master
