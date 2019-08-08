@@ -18,9 +18,6 @@ const authKeys = {
   yelp: {
     clientID: 'T3k1Bh8PhC319xpD9uaqhA',
     apiKey: 'G5z_jcPJuWJAbG42cQIJ0U-AqxgPrGYu1Jspo0yq9U6LsEyFhlt2H4FUUss3JM7upjjWF1q0_ZZMOqeIB-8qFLbGfWHtXZQ3EE_wl1kEwipcZfqxO4zRmlNL2w1LXXYx'
-  },
-  mapbox: {
-    token: 'pk.eyJ1IjoiZGV2b25ldjkyIiwiYSI6ImNqejF4MzR1ZTAwYWIza28zNWdjMXJxOHAifQ.mh6hwQSG0AiksgmB8odk2Q'
   }
 
 }

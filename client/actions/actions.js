@@ -30,7 +30,7 @@ export const submitSearch = (zipcode) => (dispatch, getState) => {
     method: 'POST',
     headers: { 'Content-type': 'application/json' },
     body: JSON.stringify({
-      location
+      zipcode
     }),
   })
   .then( res => res.json())
@@ -41,3 +41,19 @@ export const submitSearch = (zipcode) => (dispatch, getState) => {
   // promise.all - and send the results back to the client. 
 };
 
+// thunk that adds itinerary item
+export const addToItineraryRequest = id => (dispatch, getState) => {
+  const { user } = getState().dumbletour;
+
+  fetch('/api/itinerary/add', {
+    method: 'PUT',
+    headers: { 'Content-type': 'application/json' },
+    body: JSON.stringify({
+      user, id,
+    }),
+  })
+    .then(() => dispatch(addToItinerary(id)))
+    .catch((err) => {
+      console.log('There was an error in the thunk: ', err)
+    });
+};
