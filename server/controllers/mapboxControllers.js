@@ -14,7 +14,7 @@ const mapboxController = {};
     .send()
     .then(response => {
       const style = response.body;
-      console.log(style);
+      // console.log(style);
     }, error => {
       if (error) return console.error('error when creating map styles: ', error);
     });
@@ -25,7 +25,7 @@ const mapboxController = {};
     .then(response => {
       if (response.hasNextPage()) {
         const nextPageReq =response.nextPage();
-        console.log(nextPageReq);
+        // console.log(nextPageReq);
       }
     }, error => {})
 

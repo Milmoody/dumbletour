@@ -38,7 +38,7 @@ export const searchEventBrite = (zipcode) => (dispatch, getState) => {
   })
   .then( res => res.json())
   .then((resultsArr)=>{
-    console.log(resultsArr)
+    // console.log(resultsArr)
     dispatch(eventBriteResults(resultsArr));
   })
   // promise.all - and send the results back to the client. 

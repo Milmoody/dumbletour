@@ -74,26 +74,24 @@ body {
   padding-left: 25px;
   background-color: $dumble-search-modal-col;
   box-shadow: 10px 10px 10px #bbb;
-  border-radius: 5px;
+  border-radius: $curve-borders;
   font-size: 1.5rem;
   margin-top: 200px;
-  border: 1px solid $dumble-search-modal-bor-col;
   ::-webkit-datetime-edit { padding: 10px; font-family: 'Josefin Sans', sans-serif;}
 
   input {
     padding-left: 10px;
     width: inherit;
     font-size: 1.3rem;
-    border-radius: 5px;
+    border-radius: $curve-borders;
     width: 350px;
     height: 50px;
-    border: solid 1px $dumble-search-modal-bor-col;
   }
   button {
     font-family: 'Baloo Chettan', cursive;
     font-weight: lighter;
     font-size: 1.6rem;
-    border-radius: 5px;
+    border-radius: $curve-borders;
     width: 350px;
     height: 60px;
     color: $primary-text-col;
@@ -128,7 +126,7 @@ body {
     display: flex;
     .results-tab {
       padding: 20px 20px 0 20px;
-      border-radius: 5px;
+      border-radius: $curve-borders;
       font-size: 2.5rem;
       cursor: pointer;
     }
@@ -137,7 +135,7 @@ body {
     }
   }
 }
-.result-cards{
+.result-cards, .business-result-cards{
   display: grid;
   grid-template-rows: repeat(auto-fill, minmax(150px, 1fr));
   grid-template-columns: repeat(3, minmax(200px, 1fr));
@@ -146,10 +144,10 @@ body {
   grid-row-gap: 25px;
   background-color: $result-card-background;
 }
-.result-card {
 
-}
-.result-card.event-card{
+.result-card.event-card {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   border: solid 1px $dumble-result-card-bor-col;
   background-color: $light-accent-col;
@@ -166,7 +164,8 @@ body {
   }
   .card-img {
     max-width: 100%;
-    margin: 0 auto;
+    max-height: 240px;
+    margin: 10px auto;
   }
   .card-category {
     text-transform: uppercase;
@@ -177,12 +176,47 @@ body {
     font-size: 1.5rem;
     color: $dumble-price-col;
   }
-  
   .card-www{
     color: $dubmle-ig-www-col;
   }
 }
+.result-card.business-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: solid 1px $dumble-result-card-bor-col;
+  background-color: $light-accent-col;
+  padding: 20px;
+  font-size: 1.2rem;
+  a:hover {
+    color: $secondary-col;
+  }
+  .openToAll, .genderNeutral {
+    font-size: 1.4rem;
+    color: $accent-col;
+  }
+  .card-img {
+    max-width: 100%;
+    max-height: 200px;
+    margin: 10px auto;
+  }
+  .card-name {
+    padding: 3px 0;
+  }
+  .card-categories {
+    text-transform: uppercase;
+    padding: 5px 0;
+  }
+  .card-reviewCount {
+    padding: 10px 0;
+  }
+  .card-price{
+    padding: 10px 0;
+    font-size: 1.5rem;
+    color: $dumble-price-col;
+  }
 
+}
 
 
 

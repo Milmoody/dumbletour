@@ -1,16 +1,34 @@
 import React, {Fragment, useState} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+import * as actions from '../actions/actions.js';
+
 import BusinessResultCard from './BusinessResultCard.jsx';
 import ResultCard from './ResultCard.jsx';
 import Map from './Map.jsx';
+import mockdata from '../mockdata/mockdata.js';
+
+
 const ResultsWrapper = (props) => {
-  const [active, setActive] = useState('EVENTS')
+
+  // const isActive = useSelector(state => state.dumbletour);
+  // const dispatch = useDispatch();
+  const [active, setActive] = useState('EVENTS');
   const events = [];
   const maps = [];
   const businesses = [];
-  props.eventBriteResults.forEach((r, idx) => {
+
+  props.eventBriteResults ? props.eventBriteResults.forEach((r, idx) => {
+    
+    const description = !r.descriptionText ? null : r.descriptionText.length > 250 ? r.descriptionText.slice(0, 250)+'...' : r.description;
     maps.push({...r});
-    events.push(<ResultCard key = {'event-result' + idx} {...r} />);
-  });
+    events.push(<ResultCard key = {'event-result' + idx} description= {description} {...r} />);
+  }) : events.push('no results found')
+
+  props.yelpResults ? props.yelpResults.forEach((results, idx) => {
+    maps.push({...results})
+    businesses.push(<BusinessResultCard key = {'bus-result'+idx} {...results}></BusinessResultCard>)
+  }) : businesses.push('no businesses found')
+
   return (
   <section className = 'results-wrapper'>
     <nav className = 'results-nav'>
@@ -22,10 +40,6 @@ const ResultsWrapper = (props) => {
       className = {active ==='BUSINESSES' ? 'tab-active results-tab' : 'results-tab '}
       onClick = {() => setActive('BUSINESSES')}
       >Businesses</div>
-      <div 
-      className = {active ==='MAP' ? 'tab-active results-tab' : 'results-tab ' }
-      onClick = {() => setActive('MAP')}
-      >Map</div>
     </nav>
     {active === 'EVENTS' 
     ? <section className="result-cards">
@@ -33,9 +47,9 @@ const ResultsWrapper = (props) => {
     </section>
     : active === 'BUSINESSES' 
     ? <section className = 'business-result-cards'>
-      <h1>Businesses</h1>
+      {businesses}
     </section>
-    : <Map {...maps}></Map>
+    : null
     }
   </section>
     
