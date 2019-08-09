@@ -33,7 +33,7 @@ apiController.searchEventbrite = (req, res, next) => {
   }
   
   const location = req.body.zipcode || "Venice Beach";
-  let queery = ['gay','lgbt','drag show'];
+  let queery = ['gay','lgbt', 'lesbian','drag show'];
   let promises =[];
   for(let i = 0; i < queery.length; i++){ 
     promises.push(fetch(`https://www.eventbriteapi.com/v3/events/search/?q=${queery[i]}&location.address=${location}&location.within=10km`,
@@ -306,7 +306,7 @@ apiController.mergeQueries = (req, res, next) => {
   // confirming number of items in each array
   let count = 0;
   res.locals.genNeutralBusinesses.forEach(item => count += 1);
-  console.log('gender neutral bathroom businesses:', count);
+  // console.log('gender neutral bathroom businesses:', count);
   count = 0;
   res.locals.open.forEach(item => count += 1);
   console.log('open businesses:', count);

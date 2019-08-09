@@ -1,7 +1,6 @@
 import React from 'react';
 
 const ResultCard = props =>{
-  console.log(props);
   return (
   <div className="result-card event-card">
     <img className = 'card-img' src={props.imgUrl}></img>
