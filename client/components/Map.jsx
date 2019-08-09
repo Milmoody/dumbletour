@@ -26,10 +26,9 @@ class Map extends Component {
   }
 
   render() {
-return ( <React.Fragment>
+return ( <section className = 'Map'>
  <div ref = {this.mapRef}></div> 
-{/*  <div>Loading</div> */}
-</React.Fragment>);
+    </section>);
   }
 }
  

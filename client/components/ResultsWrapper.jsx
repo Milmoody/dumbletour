@@ -1,11 +1,18 @@
 import React, {Fragment, useState} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+import * as actions from '../actions/actions.js';
+
 import BusinessResultCard from './BusinessResultCard.jsx';
 import ResultCard from './ResultCard.jsx';
 import Map from './Map.jsx';
 import mockdata from '../mockdata/mockdata.js';
 
+
 const ResultsWrapper = (props) => {
-  const [active, setActive] = useState('EVENTS')
+
+  // const isActive = useSelector(state => state.dumbletour);
+  // const dispatch = useDispatch();
+  const [active, setActive] = useState('EVENTS');
   const events = [];
   const maps = [];
   const businesses = [];
@@ -32,10 +39,6 @@ const ResultsWrapper = (props) => {
       className = {active ==='BUSINESSES' ? 'tab-active results-tab' : 'results-tab '}
       onClick = {() => setActive('BUSINESSES')}
       >Businesses</div>
-      <div 
-      className = {active ==='MAP' ? 'tab-active results-tab' : 'results-tab ' }
-      onClick = {() => setActive('MAP')}
-      >Map</div>
     </nav>
     {active === 'EVENTS' 
     ? <section className="result-cards">
@@ -45,7 +48,7 @@ const ResultsWrapper = (props) => {
     ? <section className = 'business-result-cards'>
       {businesses}
     </section>
-    : <Map {...maps}></Map>
+    : null
     }
   </section>
     
