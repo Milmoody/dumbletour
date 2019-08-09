@@ -3,7 +3,7 @@ const apiController = require('../controllers/api-controllers');
 
 
 router.post('/search', apiController.searchEventbrite, apiController.eventbritePrices, apiController.eventbriteLocations, apiController.eventParse, (req, res) =>{
-  // console.log('res.locals.eResultClean:    ', res.locals.eResultClean);
+  console.log('res.locals.eResultClean:    ', res.locals.eResultClean);
   res.status(200).send(res.locals.eResultClean);
 })
 

@@ -10,7 +10,6 @@ const ResultCard = props =>{
     <p className = 'card-description'>{props.description}</p>
     <p className = 'card-address'>{props.address}</p>
     <p className="card-price">{props.price}</p>
-    <div className= "not-liked-heart"></div>
   </div> 
 )
 }

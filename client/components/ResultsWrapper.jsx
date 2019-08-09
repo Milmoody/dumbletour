@@ -18,7 +18,8 @@ const ResultsWrapper = (props) => {
   const businesses = [];
 
   props.eventBriteResults ? props.eventBriteResults.forEach((r, idx) => {
-    const description = r.descriptionText.length > 250 ? r.descriptionText.slice(0, 250)+'...' : r.description;
+    
+    const description = !r.descriptionText ? null : r.descriptionText.length > 250 ? r.descriptionText.slice(0, 250)+'...' : r.description;
     maps.push({...r});
     events.push(<ResultCard key = {'event-result' + idx} description= {description} {...r} />);
   }) : events.push('no results found')
