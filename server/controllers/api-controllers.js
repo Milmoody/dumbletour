@@ -64,16 +64,11 @@ apiController.searchEventbrite = (req, res, next) => {
   })
   .then(result => {
     let queryArray = result.map(el => {
+      const imgUrl = el.logo ? el.logo.original.url : null;
       let newEl = {
         name: el.name.text,
         //handles events with no image URLs
-        imgUrl: () =>{
-          if(el.logo){
-            el.logo.original.url
-          }else{
-            null
-          }
-        },
+        imgUrl,
         id: el.id,
         startTime: timeParse(el.start.local),
         endTime: timeParse(el.end.local),

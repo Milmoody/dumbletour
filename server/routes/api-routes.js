@@ -8,13 +8,13 @@ router.post('/search', apiController.searchEventbrite, apiController.eventbriteP
 })
 
 
-router.put('/itinerary/add', apiController.addItinerary, (req, res) => {
-  res.status(200).send(res.locals.itineraryAdd);
-});
+// router.put('/itinerary/add', apiController.addItinerary, (req, res) => {
+//   res.status(200).send(res.locals.itineraryAdd);
+// });
 
-router.put('/itinerary/remove', apiController.removeItinerary, (req, res) => {
-  res.status(200).send(res.locals.itineraryRemove);
-});
+// router.put('/itinerary/remove', apiController.removeItinerary, (req, res) => {
+//   res.status(200).send(res.locals.itineraryRemove);
+// });
 
 
 // yelp query
