@@ -11,11 +11,18 @@ const passportSetup = require('./oauth-config/passport-setup');
 const { MongoClient } = require('mongodb');
 const cookieSession = require('cookie-session');
 const passport = require('passport');
+const expressGraphQL = require('express-graphql');
+const schema = require('./schema.js')
 
 const app = express();
 
 // use a json body parser
 app.use(bodyParser.json());
+
+app.use('/graphql', expressGraphQL({
+  schema,
+  graphiql: true,
+}))
 
 if (process.env.NODE_ENV === 'production') {
   // serve index.html on the route '/'
@@ -52,5 +59,7 @@ app.get('/', (req, res) => {
 
 
 // Listen for requests on PORT 3000
-app.listen(3000);
+app.listen(3000, () => {
+  console.log('Server is listening on port 3000')
+});
 module.exports = app;
